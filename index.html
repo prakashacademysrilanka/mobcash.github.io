@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DREX // MOBCASH APP & ADMIN PANEL</title>
+    <title>DREX // MOBCASH APP & INVESTMENT PLATFORM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Firebase SDK (Modular CDN Version) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -22,10 +23,13 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
 
         window.db = db;
+        window.auth = auth;
         window.firebaseFns = {
+            createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged,
             collection, addDoc, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc
         };
 
@@ -49,11 +53,11 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #090d16; color: #f1f5f9; min-height: 100vh; }
         .sinhala-text { font-family: 'Noto Sans Sinhala', sans-serif; }
         
         .glass-panel {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.75) 0%, rgba(11, 15, 25, 0.85) 100%);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
@@ -74,39 +78,39 @@
         ::-webkit-scrollbar-thumb:hover { background: #374151; }
     </style>
 </head>
-<body class="bg-darker text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 relative">
+<body class="bg-darker text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 relative">
 
-    <!-- Top Navigation for Switching Views (App vs Admin Panel) -->
-    <div id="mode-switcher" class="hidden mb-4 flex items-center space-x-3 glass-panel px-4 py-2 rounded-2xl z-20 border border-indigo-500/20">
+    <!-- Top Navigation for Switching Views (Investment App vs MobCash Admin Gateway) -->
+    <div id="mode-switcher" class="hidden mb-6 flex items-center space-x-3 glass-panel px-4 py-2.5 rounded-2xl z-20 border border-indigo-500/20 shadow-2xl">
         <button onclick="switchView('app')" id="btn-view-app" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition-all shadow-lg shadow-indigo-600/30">
-            <i class="fa-solid fa-mobile-screen mr-1.5"></i> Investment App
+            <i class="fa-solid fa-chart-line mr-1.5"></i> Investment Platform
         </button>
-        <button onclick="switchView('admin')" id="btn-view-admin" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
-            <i class="fa-solid fa-gauge-high mr-1.5"></i> Admin Control Panel
+        <button onclick="switchView('mobcash')" id="btn-view-mobcash" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+            <i class="fa-solid fa-wallet mr-1.5"></i> MobCash Control & Gateway
         </button>
     </div>
 
     <!-- ============================================== -->
     <!-- 1. LOGIN SCREEN -->
     <!-- ============================================== -->
-    <div id="login-screen" class="w-full max-w-sm glass-panel rounded-3xl p-8 flex flex-col items-center shadow-2xl relative z-10 transition-all duration-500">
+    <div id="login-screen" class="w-full max-w-sm glass-panel rounded-3xl p-8 flex flex-col items-center shadow-2xl relative z-10 my-auto transition-all duration-500">
         <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 mb-6">
-            <i class="fa-solid fa-wallet text-3xl"></i>
+            <i class="fa-solid fa-vault text-3xl"></i>
         </div>
         
         <div class="text-center mb-8">
-            <h2 class="text-2xl font-extrabold text-white tracking-wider uppercase mb-1">Mobcash</h2>
-            <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">Secure Terminal & Admin Panel</p>
+            <h2 class="text-2xl font-extrabold text-white tracking-wider uppercase mb-1">Lanka Wealth</h2>
+            <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">MobCash Secure Gateway</p>
         </div>
 
-        <form onsubmit="handleLogin(event)" class="w-full space-y-5">
+        <div class="w-full space-y-4">
             <div>
-                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Username</label>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Email Address</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-solid fa-envelope"></i>
                     </div>
-                    <input type="text" id="login-username" placeholder="Enter username (admin / super)" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
+                    <input type="email" id="auth-email" placeholder="example@gmail.com" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
                 </div>
             </div>
             
@@ -116,520 +120,690 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                         <i class="fa-solid fa-lock"></i>
                     </div>
-                    <input type="password" id="login-password" placeholder="Enter password (1234)" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
+                    <input type="password" id="auth-password" placeholder="••••••••" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-4 mt-2 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 transition-all text-sm uppercase tracking-wider">
-                Login Access
+            <button type="button" onclick="handleUserLogin()" class="w-full py-4 mt-2 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 transition-all text-sm uppercase tracking-wider">
+                Login / ඇතුල් වන්න
             </button>
-        </form>
-
-        <p class="mt-6 text-[10px] text-slate-500 text-center">Only authorized admin-activated accounts are permitted.</p>
+            <button type="button" onclick="handleUserRegister()" class="w-full py-3 rounded-xl font-semibold text-slate-300 bg-slate-900 hover:bg-slate-800 border border-slate-800 transition-all text-xs uppercase tracking-wider">
+                Register / නව ගිණුමක් සාදන්න
+            </button>
+        </div>
+        <p class="mt-6 text-[10px] text-slate-500 text-center">MobCash & Lanka Wealth Automated Sync System</p>
     </div>
 
 
     <!-- ============================================== -->
-    <!-- 2. INVESTMENT APP MAIN SCREEN (Hidden by default) -->
+    <!-- 2. MAIN INVESTMENT PLATFORM (Lanka Wealth) -->
     <!-- ============================================== -->
-    <div id="app-screen" class="hidden w-full max-w-md glass-panel rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl flex-col h-[88vh] max-h-[900px] relative z-10 transition-all duration-500">
-        
-        <div class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/60">
-            <div class="flex items-center space-x-3">
-                <div class="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
-                    <i class="fa-solid fa-wallet text-sm"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">Investment App</h1>
-                    <span class="text-[11px] font-mono text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20 inline-block mt-0.5">
-                        ID: <span id="mobcash-account-id">MOB-LK-77492</span>
-                    </span>
-                </div>
+    <div id="investment-app-screen" class="hidden w-full max-w-5xl mx-auto space-y-6 relative z-10 transition-all duration-500">
+        <!-- Top Bar with Profile -->
+        <div class="flex justify-between items-center glass-panel px-6 py-4 rounded-2xl">
+            <div class="brand-logo">
+                <h2 class="text-xl font-extrabold bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">MobCash & Lanka Wealth</h2>
             </div>
-            <div class="text-right flex items-center space-x-2">
-                <div>
-                    <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-end">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse"></span> Live
-                    </span>
-                    <span class="text-[9px] text-slate-400 uppercase font-mono block" id="logged-user-tag">Admin</span>
-                </div>
-                <button onclick="handleLogout()" title="Logout" class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center hover:bg-rose-500/20 transition-all ml-1">
+            <div class="flex items-center space-x-3">
+                <button class="profile-btn bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 text-xs font-semibold hover:border-sky-400 transition-all" onclick="toggleModal('profileModal')">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Profile" class="w-7 h-7 rounded-full object-cover">
+                    <span id="navUserName">User</span>
+                </button>
+                <button onclick="handleLogout()" class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center hover:bg-rose-500/20 transition-all">
                     <i class="fa-solid fa-right-from-bracket text-xs"></i>
                 </button>
             </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6 space-y-6">
-            <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/40 border border-indigo-500/20 relative overflow-hidden shadow-xl">
-                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Wallet Balance</p>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1.5 font-mono">Rs. <span id="main-balance-display">0.00</span></h3>
-                <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
-                    <span>Status: <strong class="text-emerald-400">Cloud Synchronized</strong></span>
-                    <span class="text-indigo-400 font-bold"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Firestore</span>
-                </div>
+        <!-- Header -->
+        <header class="text-center py-4">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">ආයෝජන සහ MobCash කළමනාකරණ පද්ධතිය</h1>
+            <p class="text-slate-400 text-xs sm:text-sm">ඔබට අවශ්‍ය නිශ්චිත ආයෝජන සැලසුම පහසුවෙන් තෝරාගන්න</p>
+        </header>
+
+        <!-- Free Bonus Claim Banner -->
+        <div class="bonus-banner bg-gradient-to-r from-emerald-950/40 to-sky-950/40 border border-emerald-500/30 rounded-2xl p-6 flex justify-between items-center flex-wrap gap-4 shadow-xl">
+            <div>
+                <h3 class="text-emerald-400 font-bold text-base mb-1">🎁 පිළිගැනීමේ ත්‍යාගය (Welcome Bonus)</h3>
+                <p class="text-slate-400 text-xs">ඔබගේ නොමිලේ ලැබෙන රු. 100 ක මුදල දැන්ම Claim කරගන්න! (එක් වරක් පමණි)</p>
             </div>
+            <button class="claim-btn bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-600/30 text-xs transition-all" id="claimBonusBtn" onclick="claimWelcomeBonus()">රු. 100 Claim කරන්න</button>
+        </div>
 
-            <div class="grid grid-cols-2 gap-4 py-2">
-                <button onclick="switchAppTab('deposit')" id="btn-tab-deposit" class="action-circle-btn p-5 rounded-2xl glass-panel border border-indigo-500/30 bg-indigo-950/20 flex flex-col items-center text-center group">
-                    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-xl shadow-lg shadow-emerald-600/30 mb-3 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-arrow-down-long"></i>
-                    </div>
-                    <span class="font-bold text-white text-sm">Deposit</span>
-                    <span class="text-[10px] text-slate-400 mt-0.5">Top-up user balance</span>
-                </button>
+        <!-- Category Navigation Bar -->
+        <div class="category-nav flex justify-center gap-2 flex-wrap">
+            <button class="cat-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 transition-all" onclick="filterCategory('all', this)">සියලුම සැලසුම්</button>
+            <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all" onclick="filterCategory('starter', this)">Starter (600 - 3K)</button>
+            <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all" onclick="filterCategory('growth', this)">Growth (4K - 7K)</button>
+            <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all" onclick="filterCategory('vip', this)">VIP / Elite (8K+)</button>
+            <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all" onclick="filterCategory('active', this)">⚡ Active Plans</button>
+            <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-amber-500/30 text-amber-400 hover:bg-amber-500/10 transition-all" onclick="filterCategory('withdrawals', this)">🏦 Withdrawals</button>
+        </div>
 
-                <button onclick="switchAppTab('withdraw')" id="btn-tab-withdraw" class="action-circle-btn p-5 rounded-2xl glass-panel border border-slate-800 flex flex-col items-center text-center group">
-                    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-rose-600 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg shadow-rose-600/30 mb-3 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-arrow-up-long"></i>
-                    </div>
-                    <span class="font-bold text-white text-sm">Withdraw</span>
-                    <span class="text-[10px] text-slate-400 mt-0.5">Process payouts</span>
-                </button>
+        <!-- Dashboard Wallet Card -->
+        <div class="wallet-card glass-panel rounded-2xl p-6 sm:p-8 flex justify-between items-center flex-wrap gap-6 shadow-2xl">
+            <div class="wallet-info">
+                <h3 class="text-xs font-semibold uppercase text-slate-400 tracking-wider mb-1">මුළු ගිණුම් ශේෂය (Main Balance / MobCash)</h3>
+                <div class="balance text-3xl sm:text-4xl font-extrabold text-sky-400 font-mono" id="walletBalance">රු. 0.00</div>
+                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md mt-2 inline-block">
+                    ID: <span id="display-acc-no">#MC-00000</span>
+                </span>
             </div>
-
-            <div id="section-deposit" class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl">
-                <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-circle-plus text-emerald-400 mr-2"></i> New Investment Deposit</h3>
-                <form onsubmit="handleAppDeposit(event)" class="space-y-3.5">
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">User Account ID</label>
-                        <input type="text" id="app-dep-id" placeholder="e.g. #USR-1001" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Deposit Amount (Rs.)</label>
-                        <input type="number" id="app-dep-amount" placeholder="Enter amount" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none">
-                    </div>
-                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-600/30 transition-all text-sm mt-1">Execute Deposit</button>
-                </form>
-            </div>
-
-            <div id="section-withdraw" class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl hidden">
-                <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-circle-minus text-rose-400 mr-2"></i> New Investment Withdrawal</h3>
-                <form onsubmit="handleAppWithdraw(event)" class="space-y-3.5">
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">User Account ID</label>
-                        <input type="text" id="app-wth-id" placeholder="e.g. #USR-1001" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-rose-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Withdrawal Amount (Rs.)</label>
-                        <input type="number" id="app-wth-amount" placeholder="Enter amount" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-rose-500 outline-none">
-                    </div>
-                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-lg shadow-rose-600/30 transition-all text-sm mt-1">Process Withdrawal</button>
-                </form>
-            </div>
-
-            <div class="space-y-3 pt-2">
-                <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-2 text-indigo-400"></i> Firestore History Cards</h4>
-                    <span class="text-[10px] text-slate-400 font-medium" id="app-history-count">Total: 0 Records</span>
-                </div>
-                <div id="app-history-list" class="space-y-3"></div>
+            <div class="wallet-actions flex gap-3">
+                <button class="action-btn btn-deposit bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/30 text-xs transition-all" onclick="toggleModal('depositModal')">මුදල් තැන්පත් කරන්න</button>
+                <button class="action-btn btn-withdraw bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all" onclick="toggleModal('withdrawModal')">මුදල් ලබාගන්න</button>
             </div>
         </div>
 
-        <div class="px-6 py-3 border-t border-slate-800/80 bg-slate-950/60 flex items-center justify-between">
-            <p class="text-[11px] text-slate-400">Mobcash Gateway</p>
-            <button onclick="handleLogout()" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-bold flex items-center transition-all">
-                <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Logout
-            </button>
+        <!-- Dynamic Top Container for Active Plans / Withdrawals View -->
+        <div id="activeTopContainer"></div>
+
+        <!-- Investment Plans & Active Plans Section -->
+        <h2 class="section-title text-lg font-bold text-white" id="sectionHeading">✨ ආයෝජන සැලසුම් (Investment Plans)</h2>
+        <div class="plans-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="plansGrid">
+            <!-- Plans generated by JavaScript -->
+        </div>
+
+        <!-- Profit Calculator -->
+        <h2 class="section-title text-lg font-bold text-white mt-8">📊 ලාභ ගණක යන්ත්‍රය (Profit Calculator)</h2>
+        <div class="calculator-container glass-panel rounded-2xl p-6 shadow-xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <div class="input-box">
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">ආයෝජන පැකේජය තෝරන්න:</label>
+                        <select id="calcPackage" onchange="calculateReturns()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-white focus:border-sky-400 outline-none">
+                            <!-- Options generated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div class="calc-result-box bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-5 text-center">
+                    <h4 class="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-1">ඇස්තමේන්තුගත මුළු ලාභය (දින 30)</h4>
+                    <div class="profit-amount text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono mb-1" id="totalProfitOutput">රු. 0.00</div>
+                    <p class="text-xs text-slate-400" id="dailyProfitOutput">දෛනික ලාභය: රු. 0.00</p>
+                </div>
+            </div>
         </div>
     </div>
 
 
     <!-- ============================================== -->
-    <!-- 3. ADMIN CONTROL PANEL SCREEN (Hidden by default) -->
+    <!-- 3. MOBCASH ADMIN CONTROL PANEL & GATEWAY -->
     <!-- ============================================== -->
-    <div id="admin-screen" class="hidden w-full max-w-2xl glass-panel rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl flex-col h-[88vh] max-h-[900px] relative z-10 transition-all duration-500">
-        
-        <div class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/60">
+    <div id="mobcash-admin-screen" class="hidden w-full max-w-2xl mx-auto glass-panel rounded-3xl overflow-hidden border border-purple-500/30 shadow-2xl flex-col relative z-10 my-auto transition-all duration-500">
+        <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
                     <i class="fa-solid fa-gauge-high text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">Master Admin Control Panel</h1>
-                    <span class="text-[11px] font-mono text-purple-400 font-bold">Manage Investment App Metrics & Users</span>
+                    <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">MobCash Master Gateway & Admin</h1>
+                    <span class="text-[11px] font-mono text-purple-400 font-bold">Real-time User Deposit & Withdrawal Terminal</span>
                 </div>
             </div>
-            <div class="flex items-center space-x-2">
-                <button onclick="syncBalanceAndHistoryFromFirestore()" class="px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold hover:bg-indigo-500/20 transition-all">
-                    <i class="fa-solid fa-rotate mr-1"></i> Refresh Data
-                </button>
-                <button onclick="handleLogout()" class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center hover:bg-rose-500/20 transition-all">
-                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
-                </button>
-            </div>
+            <button onclick="switchView('app')" class="px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold hover:bg-indigo-500/20 transition-all">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Platform
+            </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6 space-y-6">
-            <!-- Analytics Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="p-4 rounded-2xl bg-slate-950/70 border border-indigo-500/20 shadow-xl">
-                    <p class="text-[11px] font-semibold text-slate-400 uppercase">System Vault Balance</p>
-                    <h3 class="text-xl font-extrabold text-white mt-1 font-mono">Rs. <span id="admin-vault-display">0.00</span></h3>
-                </div>
-                <div class="p-4 rounded-2xl bg-slate-950/70 border border-emerald-500/20 shadow-xl">
-                    <p class="text-[11px] font-semibold text-slate-400 uppercase">Total Transactions</p>
-                    <h3 class="text-xl font-extrabold text-emerald-400 mt-1 font-mono" id="admin-total-tx">0</h3>
-                </div>
-                <div class="p-4 rounded-2xl bg-slate-950/70 border border-purple-500/20 shadow-xl">
-                    <p class="text-[11px] font-semibold text-slate-400 uppercase">Active Status</p>
-                    <h3 class="text-xl font-extrabold text-purple-400 mt-1">Online (Cloud)</h3>
-                </div>
-            </div>
-
-            <!-- Quick Adjust Balance Form -->
-            <div class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl border border-purple-500/20">
-                <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-sliders text-purple-400 mr-2"></i> Master Wallet Override / Adjustment</h3>
-                <form onsubmit="handleAdminBalanceOverride(event)" class="flex gap-3">
-                    <input type="number" id="admin-new-vault-amount" placeholder="Set exact vault balance" required class="flex-1 bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-purple-500 outline-none">
-                    <button type="submit" class="px-5 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-600/30 transition-all text-sm">Update Vault</button>
+        <div class="p-6 space-y-6">
+            <!-- Gateway Form -->
+            <div class="glass-panel rounded-2xl p-5 space-y-4 border border-purple-500/20 shadow-xl">
+                <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-bolt text-purple-400 mr-2"></i> Instant Deposit / Withdrawal Execution</h3>
+                <form onsubmit="handleMobCashGatewaySubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">User Account ID</label>
+                            <input type="text" id="gateway-userid" placeholder="e.g. #MC-77492" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-purple-500 font-mono outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Action Type</label>
+                            <select id="gateway-type" class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-purple-500 outline-none">
+                                <option value="deposit">Deposit (Top-up)</option>
+                                <option value="withdraw">Withdrawal (Deduct)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Amount (Rs.)</label>
+                        <input type="number" id="gateway-amount" placeholder="Enter amount" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-purple-500 font-mono outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-600/30 transition-all text-sm uppercase tracking-wider">
+                        Execute Transaction
+                    </button>
                 </form>
             </div>
 
-            <!-- Full Transaction Log Table / List -->
+            <!-- Transaction Logs -->
             <div class="space-y-3">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-list-check mr-2 text-purple-400"></i> All App Transaction Logs</h4>
-                <div id="admin-history-list" class="space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-2 text-purple-400"></i> Firestore Gateway Logs</h4>
+                <div id="mobcash-history-list" class="space-y-3 max-h-60 overflow-y-auto">
                     <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
-
     </div>
 
 
     <!-- ============================================== -->
-    <!-- 4. ERROR NOTIFICATION MODAL -->
+    <!-- 4. MODALS (Profile, Deposit, Withdraw) -->
     <!-- ============================================== -->
-    <div id="error-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeErrorModal()"></div>
-        <div class="relative glass-panel bg-slate-900/95 border border-rose-500/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="flex flex-col items-center text-center mt-2">
-                <div class="w-16 h-16 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center justify-center text-rose-500 text-3xl mb-4 shadow-lg shadow-rose-500/20">
-                    <i class="fa-solid fa-circle-exclamation"></i>
-                </div>
-                <h3 class="text-lg font-bold text-white mb-3 sinhala-text tracking-wide">ලොගින් වීම අසාර්ථකයි!</h3>
-                <div class="bg-rose-950/30 border border-rose-900/50 p-4 rounded-xl mb-6">
-                    <p class="text-sm text-rose-100/90 leading-relaxed sinhala-text font-medium">
-                        "මේ Mobcash එක ඇඩ්මින් විසින් සක්‍රිය කරනවා මැති අතර කරුණාකර ඇඩ්මින් විසින් සක්‍රිය කරන ලද ගිණුමක් සකසාගෙන ලොගින් වන්න."
-                    </p>
-                </div>
-                <button onclick="closeErrorModal()" class="w-full py-3.5 rounded-xl font-bold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all text-sm uppercase tracking-wider">
-                    හරි (OK)
-                </button>
+    <!-- Profile Modal -->
+    <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="profileModal">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="toggleModal('profileModal')"></div>
+        <div class="relative custom-modal glass-panel border border-slate-700/80 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg" onclick="toggleModal('profileModal')">&times;</button>
+            <div class="text-center mb-6">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces" alt="Profile" class="w-20 h-20 rounded-full border-2 border-sky-400 object-cover mx-auto mb-3 shadow-lg">
+                <h3 class="text-lg font-bold text-white" id="modalUserName">User</h3>
+                <p class="text-xs text-slate-400">პ්‍රිමියම් ගිණුම් සාමාජික</p>
             </div>
+            <div class="bg-slate-950/80 rounded-xl p-4 space-y-2.5 mb-6 text-xs">
+                <div class="flex justify-between pb-2 border-b border-slate-800">
+                    <span class="text-slate-400">ගිණුම් අංකය (ID):</span>
+                    <strong id="profileAccNo" class="font-mono text-sky-400">#MC-00000</strong>
+                </div>
+                <div class="flex justify-between pb-2 border-b border-slate-800">
+                    <span class="text-slate-400">විද්‍යුත් තැපෑල:</span>
+                    <strong id="profileEmail" class="text-white">-</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">සක්‍රීය පැකේජ:</span>
+                    <strong id="activePlansCount" class="text-emerald-400">0 ක්</strong>
+                </div>
+            </div>
+            <button onclick="handleLogout()" class="w-full py-3 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-500 transition-all text-xs mb-2.5">පිටවීම (Logout)</button>
+            <button onclick="toggleModal('profileModal')" class="w-full py-3 rounded-xl font-bold text-slate-300 bg-slate-900 hover:bg-slate-800 border border-slate-800 transition-all text-xs">වසන්න</button>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="depositModal">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="toggleModal('depositModal')"></div>
+        <div class="relative custom-modal glass-panel border border-emerald-500/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg" onclick="toggleModal('depositModal')">&times;</button>
+            <div class="text-center mb-4">
+                <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center text-emerald-400 text-2xl mx-auto mb-3 shadow-lg">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <h3 class="text-base font-bold text-white mb-1">මුදල් තැන්පත් කිරීම (Deposit Notice)</h3>
+                <p class="text-xs text-slate-400">ඩිපොසිට් කිරීම සඳහා ඔබේ ගිණුම් අංකය නියෝජිතයාට ලබා දෙන්න.</p>
+            </div>
+            <div class="bg-slate-950/80 border border-emerald-500/20 rounded-xl p-4 text-center mb-4">
+                <p class="text-[11px] text-emerald-400 font-semibold mb-1">ඔබේ MobCash ID එක:</p>
+                <strong id="modal-dep-acc" class="font-mono text-sm text-white">#MC-00000</strong>
+            </div>
+            <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 text-center mb-4">
+                <p class="text-[10px] text-slate-400">නිල නියෝජිත දුරකථන අංකය: <strong class="text-white">0725939056</strong></p>
+            </div>
+            <button onclick="toggleModal('depositModal')" class="w-full py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition-all text-xs">තේරුම් ගත්තා</button>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="withdrawModal">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="toggleModal('withdrawModal')"></div>
+        <div class="relative custom-modal glass-panel border border-slate-700/80 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+            <button class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg" onclick="toggleModal('withdrawModal')">&times;</button>
+            <div class="text-center mb-4">
+                <h3 class="text-base font-bold text-white mb-1">මුදල් ආපසු ගැනීම (Withdrawal)</h3>
+                <p class="text-[11px] text-slate-400">අවම මුදල රු. 1,500ක් වන අතර උපරිම රු. 25,000කි.</p>
+            </div>
+            <div class="space-y-3 mb-5">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">මුදල (රු.)</label>
+                    <input type="number" id="withdrawAmount" placeholder="උදා: 5000" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-sky-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">බැංකුව සහ ශාඛාව</label>
+                    <input type="text" id="bankName" placeholder="උදා: BOC - Matara" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-sky-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-400 uppercase mb-1">ගිණුම් අංකය</label>
+                    <input type="text" id="accountNo" placeholder="ඔබේ බැංකු ගිණුම් අංකය" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:border-sky-400 outline-none">
+                </div>
+            </div>
+            <button onclick="processWithdrawal()" class="w-full py-3 rounded-xl font-bold text-white bg-sky-600 hover:bg-sky-500 transition-all text-xs">ඉල්ලුම් කරන්න (Submit)</button>
         </div>
     </div>
 
 
     <!-- ============================================== -->
-    <!-- 5. JAVASCRIPT LOGIC -->
+    <!-- 5. APP JAVASCRIPT LOGIC & FIREBASE SYNC -->
     <!-- ============================================== -->
     <script>
-        let currentMainBalance = 0.00;
-        let loggedUserRole = localStorage.getItem('mob_user') || null;
+        let mainBalance = 0.00;
+        let bonusClaimed = false;
+        let userActiveInvestments = [];
+        let userWithdrawals = [];
+        let currentFilter = 'all';
+        let currentUser = { name: "User", email: "", accNo: "#MC-00000" };
+        let activeUserUid = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (loggedUserRole) {
-                applyLoginState(loggedUserRole);
-            }
-        });
+        const packages = [
+            { amount: 600, dailyRate: 2.0, days: 30, category: 'starter' },
+            { amount: 1000, dailyRate: 2.2, days: 30, category: 'starter' },
+            { amount: 1500, dailyRate: 2.5, days: 30, category: 'starter' },
+            { amount: 2000, dailyRate: 2.8, days: 30, category: 'starter' },
+            { amount: 3000, dailyRate: 3.0, days: 30, category: 'starter' },
+            { amount: 4000, dailyRate: 3.2, days: 30, category: 'growth' },
+            { amount: 5000, dailyRate: 3.5, days: 30, category: 'growth' },
+            { amount: 6000, dailyRate: 3.8, days: 30, category: 'growth' },
+            { amount: 7000, dailyRate: 4.0, days: 30, category: 'growth' },
+            { amount: 8000, dailyRate: 4.2, days: 30, category: 'vip' },
+            { amount: 9000, dailyRate: 4.35, days: 30, category: 'vip' },
+            { amount: 10000, dailyRate: 4.5, days: 30, category: 'vip' }
+        ];
 
         window.addEventListener('firebase-initialized', () => {
-            if (loggedUserRole) {
-                syncBalanceAndHistoryFromFirestore();
-            }
+            const { onAuthStateChanged } = window.firebaseFns;
+            onAuthStateChanged(window.auth, async (user) => {
+                if (user) {
+                    activeUserUid = user.uid;
+                    await loadUserData(user.uid);
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('mode-switcher').classList.remove('hidden');
+                    document.getElementById('mode-switcher').classList.add('flex');
+                    switchView('app');
+                } else {
+                    activeUserUid = null;
+                    document.getElementById('login-screen').classList.remove('hidden');
+                    document.getElementById('investment-app-screen').classList.add('hidden');
+                    document.getElementById('mobcash-admin-screen').classList.add('hidden');
+                    document.getElementById('mode-switcher').classList.add('hidden');
+                }
+            });
         });
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            const uname = document.getElementById('login-username').value.trim().toLowerCase();
-            const pass = document.getElementById('login-password').value;
+        async function handleUserLogin() {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-password').value.trim();
+            if(!email || !pass) return alert('කරුණාකර විද්‍යුත් තැපෑල සහ මුරපදය ඇතුළත් කරන්න!');
 
-            if (pass === '1234') {
-                if (uname === 'admin' || uname === 'super') {
-                    loggedUserRole = uname;
-                    localStorage.setItem('mob_user', loggedUserRole);
-                    applyLoginState(uname);
-                } else {
-                    document.getElementById('error-modal').classList.remove('hidden');
-                }
-            } else {
-                document.getElementById('error-modal').classList.remove('hidden');
+            try {
+                const { signInWithEmailAndPassword } = window.firebaseFns;
+                const res = await signInWithEmailAndPassword(window.auth, email, pass);
+                activeUserUid = res.user.uid;
+                await loadUserData(activeUserUid);
+            } catch (err) {
+                alert('පිවිසීමේ දෝෂයක්: ' + err.message);
             }
         }
 
-        function applyLoginState(role) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('mode-switcher').classList.remove('hidden');
-            document.getElementById('mode-switcher').classList.add('flex');
-            
-            const roleName = role === 'admin' ? 'Admin' : 'Super';
-            document.getElementById('logged-user-tag').innerText = roleName;
+        async function handleUserRegister() {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-password').value.trim();
+            if(!email || !pass) return alert('කරුණාකර විද්‍යුත් තැපෑල සහ මුරපදය ඇතුළත් කරන්න!');
 
-            // Default to App View on login
-            switchView('app');
-            syncBalanceAndHistoryFromFirestore();
+            try {
+                const { createUserWithEmailAndPassword } = window.firebaseFns;
+                const res = await createUserWithEmailAndPassword(window.auth, email, pass);
+                activeUserUid = res.user.uid;
+                
+                currentUser = {
+                    name: email.split('@')[0],
+                    email: email,
+                    accNo: "#MC-" + Math.floor(10000 + Math.random() * 90000)
+                };
+                mainBalance = 0.00;
+                bonusClaimed = false;
+                userActiveInvestments = [];
+                userWithdrawals = [];
+                await saveUserData();
+                alert('සුභ පැතුම්! ගිණුම සාර්ථකව සාදන ලදී.');
+            } catch (err) {
+                alert('ලියාපදිංචි වීමේ දෝෂයක්: ' + err.message);
+            }
+        }
+
+        async function handleLogout() {
+            const { signOut } = window.firebaseFns;
+            await signOut(window.auth);
+        }
+
+        async function loadUserData(uid) {
+            try {
+                const { doc, getDoc } = window.firebaseFns;
+                const docRef = doc(window.db, "users", uid);
+                const snap = await getDoc(docRef);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    mainBalance = data.mainBalance || 0;
+                    bonusClaimed = data.bonusClaimed || false;
+                    userActiveInvestments = data.userActiveInvestments || [];
+                    userWithdrawals = data.userWithdrawals || [];
+                    currentUser = data.currentUser || { name: "User", email: window.auth.currentUser.email, accNo: "#MC-77492" };
+                } else {
+                    currentUser = { name: "User", email: window.auth.currentUser.email, accNo: "#MC-" + Math.floor(10000 + Math.random() * 90000) };
+                    mainBalance = 0;
+                    bonusClaimed = false;
+                    userActiveInvestments = [];
+                    userWithdrawals = [];
+                    await saveUserData();
+                }
+                updateUI();
+                renderApp('all');
+                syncMobCashGatewayLogs();
+            } catch (err) {
+                console.error("Error loading user data:", err);
+            }
+        }
+
+        async function saveUserData() {
+            if (!activeUserUid) return;
+            try {
+                const { doc, setDoc } = window.firebaseFns;
+                const docRef = doc(window.db, "users", activeUserUid);
+                await setDoc(docRef, {
+                    mainBalance, bonusClaimed, userActiveInvestments, userWithdrawals, currentUser
+                }, { merge: true });
+                updateUI();
+            } catch (err) {
+                console.error("Error saving user data:", err);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('navUserName').innerText = currentUser.name;
+            document.getElementById('modalUserName').innerText = currentUser.name;
+            document.getElementById('profileEmail').innerText = currentUser.email;
+            document.getElementById('profileAccNo').innerText = currentUser.accNo;
+            document.getElementById('display-acc-no').innerText = currentUser.accNo;
+            document.getElementById('modal-dep-acc').innerText = currentUser.accNo;
+            document.getElementById('walletBalance').innerText = `රු. ${mainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('activePlansCount').innerText = `${userActiveInvestments.length} ක්`;
+
+            const claimBtn = document.getElementById('claimBonusBtn');
+            if(bonusClaimed) {
+                claimBtn.innerText = "Claimed ✓";
+                claimBtn.disabled = true;
+                claimBtn.className = "px-6 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs cursor-not-allowed";
+            }
         }
 
         function switchView(view) {
-            const appScreen = document.getElementById('app-screen');
-            const adminScreen = document.getElementById('admin-screen');
+            const appScreen = document.getElementById('investment-app-screen');
+            const mobcashScreen = document.getElementById('mobcash-admin-screen');
             const btnApp = document.getElementById('btn-view-app');
-            const isAdmin = loggedUserRole === 'admin';
+            const btnMobcash = document.getElementById('btn-view-mobcash');
 
-            if (view === 'app') {
+            if(view === 'app') {
                 appScreen.classList.remove('hidden');
-                appScreen.classList.add('flex');
-                adminScreen.classList.add('hidden');
-                adminScreen.classList.remove('flex');
-
+                mobcashScreen.classList.add('hidden');
+                mobcashScreen.classList.remove('flex');
                 btnApp.className = "px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition-all shadow-lg shadow-indigo-600/30";
-                const btnAdmin = document.getElementById('btn-view-admin');
-                if(btnAdmin) btnAdmin.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all";
-            } else if (view === 'admin') {
-                if (!isAdmin) {
-                    alert('මෙම ඇඩ්මින් පැනලය වෙත පිවිසීමට ඇඩ්මින් අනුමැතිය අවශ්‍යයි!');
+                btnMobcash.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all";
+            } else {
+                appScreen.classList.add('hidden');
+                mobcashScreen.classList.remove('hidden');
+                mobcashScreen.classList.add('flex');
+                btnMobcash.className = "px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white transition-all shadow-lg shadow-purple-600/30";
+                btnApp.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all";
+                document.getElementById('gateway-userid').value = currentUser.accNo;
+                syncMobCashGatewayLogs();
+            }
+        }
+
+        async function claimWelcomeBonus() {
+            if(bonusClaimed) return;
+            mainBalance += 100.00;
+            bonusClaimed = true;
+            await saveUserData();
+            alert("සුභ පැතුම්! නොමිලේ ලැබුණු රු. 100 ක බෝනස් මුදල එකතු විය!");
+        }
+
+        function renderApp(cat) {
+            currentFilter = cat;
+            const grid = document.getElementById('plansGrid');
+            const select = document.getElementById('calcPackage');
+            const heading = document.getElementById('sectionHeading');
+            const topContainer = document.getElementById('activeTopContainer');
+            
+            grid.innerHTML = '';
+            topContainer.innerHTML = '';
+            
+            if(select.options.length === 0) {
+                packages.forEach(p => {
+                    select.innerHTML += `<option value="${p.amount}">රු. ${p.amount.toLocaleString()} (${p.dailyRate}% දිනකට)</option>`;
+                });
+            }
+
+            if(cat === 'withdrawals') {
+                heading.innerText = "🏦 ඔබගේ මුදල් ආපසු ගැනීමේ ඉල්ලීම් (Withdrawal History)";
+                if(userWithdrawals.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center text-slate-400 py-10 text-xs">තවම මුදල් ආපසු ගැනීමේ ඉල්ලීම් සිදු කර නොමැත.</div>`;
                     return;
                 }
-                appScreen.classList.add('hidden');
-                appScreen.classList.remove('flex');
-                adminScreen.classList.remove('hidden');
-                adminScreen.classList.add('flex');
-
-                const btnAdmin = document.getElementById('btn-view-admin');
-                btnAdmin.className = "px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 text-white transition-all shadow-lg shadow-purple-600/30";
-                btnApp.className = "px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all";
-            }
-        }
-
-        function closeErrorModal() {
-            document.getElementById('error-modal').classList.add('hidden');
-        }
-
-        function handleLogout() {
-            document.getElementById('app-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('flex');
-            document.getElementById('admin-screen').classList.add('hidden');
-            document.getElementById('admin-screen').classList.remove('flex');
-            document.getElementById('mode-switcher').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden');
-            
-            document.getElementById('login-username').value = '';
-            document.getElementById('login-password').value = '';
-            localStorage.removeItem('mob_user');
-            loggedUserRole = null;
-        }
-
-        async function updateBalanceInFirestore(newBal) {
-            currentMainBalance = newBal;
-            document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('admin-vault-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            
-            if (window.db && window.firebaseFns) {
-                try {
-                    const { doc, setDoc } = window.firebaseFns;
-                    const balanceRef = doc(window.db, "mobcash_config", "wallet_state");
-                    await setDoc(balanceRef, { balance: currentMainBalance }, { merge: true });
-                } catch (err) {
-                    console.error("Error updating balance in Firestore: ", err);
-                }
-            }
-        }
-
-        async function syncBalanceAndHistoryFromFirestore() {
-            if (!window.db || !window.firebaseFns) return;
-            const { doc, getDoc, collection, getDocs, query, orderBy } = window.firebaseFns;
-
-            try {
-                const balanceSnap = await getDoc(doc(window.db, "mobcash_config", "wallet_state"));
-                if (balanceSnap.exists()) {
-                    currentMainBalance = balanceSnap.data().balance;
-                } else {
-                    currentMainBalance = loggedUserRole === 'admin' ? 100000.00 : 0.00;
-                    await updateBalanceInFirestore(currentMainBalance);
-                }
-                document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                document.getElementById('admin-vault-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-                const q = query(collection(window.db, "mobcash_transactions"), orderBy("timestamp", "desc"));
-                const querySnapshot = await getDocs(q);
-                let historyList = [];
-                querySnapshot.forEach((docSnap) => {
-                    historyList.push(docSnap.data());
-                });
-
-                renderHistoryCards(historyList);
-                renderAdminHistoryCards(historyList);
-            } catch (err) {
-                console.error("Error syncing with Firestore:", err);
-            }
-        }
-
-        function switchAppTab(tab) {
-            const depSection = document.getElementById('section-deposit');
-            const wthSection = document.getElementById('section-withdraw');
-            const btnDep = document.getElementById('btn-tab-deposit');
-            const btnWth = document.getElementById('btn-tab-withdraw');
-
-            if(tab === 'deposit') {
-                depSection.classList.remove('hidden');
-                wthSection.classList.add('hidden');
-                btnDep.classList.add('border-indigo-500/30', 'bg-indigo-950/20');
-                btnDep.classList.remove('border-slate-800');
-                btnWth.classList.add('border-slate-800');
-                btnWth.classList.remove('border-rose-500/30', 'bg-rose-950/20');
-            } else {
-                depSection.classList.add('hidden');
-                wthSection.classList.remove('hidden');
-                btnWth.classList.add('border-rose-500/30', 'bg-rose-950/20');
-                btnWth.classList.remove('border-slate-800');
-                btnDep.classList.add('border-slate-800');
-                btnDep.classList.remove('border-indigo-500/30', 'bg-indigo-950/20');
-            }
-        }
-
-        async function handleAppDeposit(e) {
-            e.preventDefault();
-            const userId = document.getElementById('app-dep-id').value;
-            const amountInput = document.getElementById('app-dep-amount').value;
-            const amount = parseFloat(amountInput);
-
-            if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
-            if (amount > currentMainBalance) return alert('ප්‍රමාණවත් බැලන්ස් එකක් නොමැත! (Insufficient Balance)');
-
-            let newBal = currentMainBalance - amount;
-            await updateBalanceInFirestore(newBal);
-
-            await saveAndAddHistoryCard(userId, amount, 'Deposit');
-            alert('Deposit සාර්ථකයි! Firestore වෙත සුරකින ලදී.');
-            e.target.reset();
-        }
-
-        async function handleAppWithdraw(e) {
-            e.preventDefault();
-            const userId = document.getElementById('app-wth-id').value;
-            const amountInput = document.getElementById('app-wth-amount').value;
-            const amount = parseFloat(amountInput);
-
-            if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
-
-            let newBal = currentMainBalance + amount;
-            await updateBalanceInFirestore(newBal);
-
-            await saveAndAddHistoryCard(userId, amount, 'Withdrawal');
-            alert('Withdrawal සාර්ථකයි! Firestore වෙත සුරකින ලදී.');
-            e.target.reset();
-        }
-
-        async function handleAdminBalanceOverride(e) {
-            e.preventDefault();
-            const newAmt = parseFloat(document.getElementById('admin-new-vault-amount').value);
-            if (isNaN(newAmt)) return;
-            await updateBalanceInFirestore(newAmt);
-            alert('Master Vault Balance successfully updated in Firestore!');
-            e.target.reset();
-        }
-
-        async function saveAndAddHistoryCard(userId, amount, type) {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            const fullDateTime = `${dateStr} - ${timeStr}`;
-
-            const record = { 
-                userId, 
-                amount, 
-                type, 
-                fullDateTime, 
-                timestamp: Date.now() 
-            };
-            
-            if (window.db && window.firebaseFns) {
-                try {
-                    const { collection, addDoc } = window.firebaseFns;
-                    await addDoc(collection(window.db, "mobcash_transactions"), record);
-                } catch (err) {
-                    console.error("Error adding document to Firestore: ", err);
-                }
-            }
-
-            await syncBalanceAndHistoryFromFirestore();
-        }
-
-        function renderHistoryCards(historyList) {
-            const historyListContainer = document.getElementById('app-history-list');
-            historyListContainer.innerHTML = '';
-            document.getElementById('app-history-count').innerText = `Total: ${historyList.length} Records`;
-
-            historyList.forEach(item => {
-                const formattedAmount = item.amount.toLocaleString('en-US', {minimumFractionDigits: 2});
-                const isDep = item.type === 'Deposit';
-                const colorClass = isDep ? 'emerald' : 'rose';
-                const iconClass = isDep ? 'fa-arrow-down' : 'fa-arrow-up';
-                const sign = isDep ? '-' : '+';
-
-                const cardDiv = document.createElement('div');
-                cardDiv.className = `p-4 bg-slate-950/70 border border-${colorClass}-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl`;
-                cardDiv.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-${colorClass}-500/25 border border-${colorClass}-500/40 text-${colorClass}-400 flex items-center justify-center text-sm font-bold shrink-0">
-                            <i class="fa-solid ${iconClass}"></i>
-                        </div>
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <h5 class="font-bold text-white text-xs">${item.type}</h5>
-                                <span class="text-[9px] font-mono bg-${colorClass}-500/10 text-${colorClass}-400 border border-${colorClass}-500/20 px-1.5 py-0.5 rounded">${item.userId}</span>
+                userWithdrawals.forEach(w => {
+                    grid.innerHTML += `
+                        <div class="glass-panel rounded-2xl p-5 border border-emerald-500/30 space-y-3">
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">Approved ✓</span>
+                            <div class="text-xl font-extrabold text-white font-mono">රු. ${w.amount.toLocaleString()}</div>
+                            <div class="text-xs text-slate-400 space-y-1">
+                                <div>බැංකුව: <strong class="text-white">${w.bank}</strong></div>
+                                <div>ගිණුම: <strong class="text-white">${w.account}</strong></div>
+                                <div>දිනය: <strong class="text-white">${w.date}</strong></div>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${item.fullDateTime}</p>
                         </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-${colorClass}-400 font-extrabold text-xs bg-${colorClass}-500/10 border border-${colorClass}-500/20 px-2.5 py-1.5 rounded-xl block">${sign} Rs. ${formattedAmount}</span>
-                    </div>
-                `;
-                historyListContainer.appendChild(cardDiv);
-            });
-        }
-
-        function renderAdminHistoryCards(historyList) {
-            const adminListContainer = document.getElementById('admin-history-list');
-            adminListContainer.innerHTML = '';
-            document.getElementById('admin-total-tx').innerText = historyList.length;
-
-            if (historyList.length === 0) {
-                adminListContainer.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No transaction logs available in Firestore.</p>';
+                    `;
+                });
                 return;
             }
 
-            historyList.forEach(item => {
-                const formattedAmount = item.amount.toLocaleString('en-US', {minimumFractionDigits: 2});
-                const isDep = item.type === 'Deposit';
-                const colorClass = isDep ? 'emerald' : 'rose';
-
-                const cardDiv = document.createElement('div');
-                cardDiv.className = `p-4 bg-slate-950/80 border border-slate-800 rounded-2xl flex items-center justify-between gap-3 shadow-xl`;
-                cardDiv.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-xl bg-slate-800 text-slate-300 flex items-center justify-center text-xs font-mono font-bold">
-                            #TX
-                        </div>
+            if(cat === 'active') {
+                heading.innerText = "⚡ ඔබගේ සක්‍රීය ආයෝජන (Active Plans & Daily Income)";
+                let totalEarn = userActiveInvestments.reduce((sum, p) => sum + (p.currentDailyEarn || 0), 0);
+                
+                topContainer.innerHTML = `
+                    <div class="glass-panel border border-emerald-500/30 rounded-2xl p-5 flex justify-between items-center flex-wrap gap-4 mb-6">
                         <div>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs font-bold text-white">${item.type}</span>
-                                <span class="text-[10px] font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded">${item.userId}</span>
-                            </div>
-                            <p class="text-[10px] text-slate-400 mt-0.5">${item.fullDateTime}</p>
+                            <h4 class="text-xs text-slate-400 font-semibold mb-1">එක්රැස් වූ මුළු දෛනික ආදායම</h4>
+                            <div class="text-2xl font-extrabold text-emerald-400 font-mono">රු. ${totalEarn.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
                         </div>
-                    </div>
-                    <div class="text-right font-mono">
-                        <span class="text-${colorClass}-400 font-bold text-xs">Rs. ${formattedAmount}</span>
+                        <button onclick="transferToMainBalance()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all">Transfer To Main Balance</button>
                     </div>
                 `;
-                adminListContainer.appendChild(cardDiv);
+
+                if(userActiveInvestments.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center text-slate-400 py-10 text-xs">තවම සක්‍රීය කළ ආයෝජන නොමැත.</div>`;
+                    return;
+                }
+
+                userActiveInvestments.forEach(p => {
+                    let dEarn = (p.amount * p.dailyRate) / 100;
+                    grid.innerHTML += `
+                        <div class="glass-panel rounded-2xl p-5 border border-emerald-500/30 space-y-3">
+                            <span class="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded inline-block">Active Plan</span>
+                            <div class="text-xl font-extrabold text-white font-mono">රු. ${p.amount.toLocaleString()}</div>
+                            <div class="text-xs text-slate-400 space-y-1">
+                                <div>දෛනික ආදායම: <strong class="text-emerald-400">රු. ${(p.currentDailyEarn || dEarn).toFixed(2)}</strong></div>
+                                <div>ප්‍රතිලාභය: <strong class="text-white">${p.dailyRate}%</strong></div>
+                                <div>කාලය: <strong class="text-white">දින ${p.days}යි</strong></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                return;
+            }
+
+            heading.innerText = "✨ ආයෝජන සැලසුම් (Investment Plans)";
+            let list = cat === 'all' ? packages : packages.filter(p => p.category === cat);
+            list.forEach(p => {
+                let daily = (p.amount * p.dailyRate) / 100;
+                let total = daily * p.days;
+                grid.innerHTML += `
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 flex flex-col justify-between hover:border-sky-400/50 transition-all">
+                        <div>
+                            <div class="text-xl font-extrabold text-sky-400 font-mono mb-4">රු. ${p.amount.toLocaleString()}</div>
+                            <div class="text-xs text-slate-400 space-y-2 mb-6">
+                                <div class="flex justify-between"><span>දෛනික ප්‍රතිලාභය:</span><strong class="text-white">${p.dailyRate}%</strong></div>
+                                <div class="flex justify-between"><span>දිනකට ලාභය:</span><strong class="text-emerald-400">රු. ${daily.toFixed(2)}</strong></div>
+                                <div class="flex justify-between"><span>කාලය:</span><strong class="text-white">දින ${p.days}යි</strong></div>
+                                <div class="flex justify-between"><span>මුළු ලාභය:</span><strong class="text-sky-400">රු. ${total.toLocaleString()}</strong></div>
+                            </div>
+                        </div>
+                        <button onclick="startInvestment(${p.amount})" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 text-slate-950 font-bold text-xs transition-all shadow-lg shadow-sky-500/20">ආයෝජනය කරන්න</button>
+                    </div>
+                `;
             });
+            calculateReturns();
+        }
+
+        function filterCategory(cat, btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = "cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all";
+            });
+            btn.className = "cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 transition-all";
+            renderApp(cat);
+        }
+
+        function calculateReturns() {
+            let amt = parseInt(document.getElementById('calcPackage').value);
+            let pkg = packages.find(p => p.amount === amt);
+            if(pkg) {
+                let daily = (pkg.amount * pkg.dailyRate) / 100;
+                let tot = daily * pkg.days;
+                document.getElementById('totalProfitOutput').innerText = `රු. ${tot.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('dailyProfitOutput').innerText = `දෛනික ලාභය: රු. ${daily.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            }
+        }
+
+        async function startInvestment(amt) {
+            if(mainBalance < amt) return alert('ප්‍රමාණවත් ශේෂයක් නොමැත!');
+            mainBalance -= amt;
+            let pkg = packages.find(p => p.amount === amt);
+            userActiveInvestments.push({ ...pkg, currentDailyEarn: (amt * pkg.dailyRate) / 100 });
+            await saveUserData();
+            alert('සාර්ථකයි! ආයෝජන පැකේජය මිලදී ගන්නා ලදී.');
+            if(currentFilter === 'active') renderApp('active');
+        }
+
+        async function transferToMainBalance() {
+            let tot = userActiveInvestments.reduce((sum, p) => sum + (p.currentDailyEarn || 0), 0);
+            if(tot <= 0) return;
+            mainBalance += tot;
+            userActiveInvestments.forEach(p => p.currentDailyEarn = 0);
+            await saveUserData();
+            alert(`සාර්ථකයි! රු. ${tot.toFixed(2)} මුදල ප්‍රධාන ගිණුමට මාරු විය.`);
+            renderApp('active');
+        }
+
+        async function processWithdrawal() {
+            let amt = parseFloat(document.getElementById('withdrawAmount').value);
+            let bank = document.getElementById('bankName').value.trim();
+            let acc = document.getElementById('accountNo').value.trim();
+            if(!amt || !bank || !acc) return alert('කරුණාකර සියලුම විස්තර පුරවන්න!');
+            if(amt < 1500 || amt > 25000) return alert('මුදල රු. 1,500 සහ රු. 25,000 අතර විය යුතුය!');
+            if(amt > mainBalance) return alert('ශේෂය ප්‍රමාණවත් නොවේ!');
+
+            mainBalance -= amt;
+            let now = new Date();
+            userWithdrawals.push({ amount: amt, bank, account: acc, date: now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) });
+            await saveUserData();
+            alert('මුදල් ආපසු ගැනීමේ ඉල්ලීම සාර්ථකයි!');
+            toggleModal('withdrawModal');
+            if(currentFilter === 'withdrawals') renderApp('withdrawals');
+        }
+
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        // ==========================================
+        // MOBCASH GATEWAY & ADMIN DIRECT INTEGRATION
+        // ==========================================
+        async function handleMobCashGatewaySubmit(e) {
+            e.preventDefault();
+            const targetAccId = document.getElementById('gateway-userid').value.trim();
+            const type = document.getElementById('gateway-type').value;
+            const amount = parseFloat(document.getElementById('gateway-amount').value);
+
+            if(!targetAccId || isNaN(amount) || amount <= 0) return alert('කරුණාකර නිවැරදි දත්ත ඇතුළත් කරන්න!');
+
+            if(window.db && window.firebaseFns) {
+                const { collection, getDocs, query, where, updateDoc, doc, addDoc } = window.firebaseFns;
+                try {
+                    // Find user by account ID in Firestore users collection
+                    const usersRef = collection(window.db, "users");
+                    const q = query(usersRef);
+                    const snap = await getDocs(q);
+                    let foundDocRef = null;
+                    let foundData = null;
+
+                    snap.forEach(d => {
+                        const data = d.data();
+                        if(data.currentUser && data.currentUser.accNo === targetAccId) {
+                            foundDocRef = doc(window.db, "users", d.id);
+                            foundData = data;
+                        }
+                    });
+
+                    if(!foundDocRef) {
+                        return alert(`සමාවන්න! ${targetAccId} දරන ගිණුමක් හමු නොවීය.`);
+                    }
+
+                    let newBal = foundData.mainBalance || 0;
+                    if(type === 'deposit') {
+                        newBal += amount;
+                    } else {
+                        if(newBal < amount) return alert('ගිණුමේ ප්‍රමාණවත් ශේෂයක් නොමැත!');
+                        newBal -= amount;
+                    }
+
+                    await updateDoc(foundDocRef, { mainBalance: newBal });
+
+                    // Log transaction
+                    await addDoc(collection(window.db, "mobcash_transactions"), {
+                        userId: targetAccId,
+                        amount: amount,
+                        type: type === 'deposit' ? 'Deposit' : 'Withdrawal',
+                        timestamp: Date.now(),
+                        date: new Date().toLocaleString()
+                    });
+
+                    alert(`MobCash Gateway: ${targetAccId} ගිණුම සාර්ථකව යාවත්කාලීන විය! නව ශේෂය: රු. ${newBal.toFixed(2)}`);
+                    e.target.reset();
+                    document.getElementById('gateway-userid').value = currentUser.accNo;
+                    if(activeUserUid) loadUserData(activeUserUid);
+                    syncMobCashGatewayLogs();
+                } catch(err) {
+                    console.error("Gateway Error:", err);
+                    alert("දෝෂයක් සිදු විය: " + err.message);
+                }
+            }
+        }
+
+        async function syncMobCashGatewayLogs() {
+            if(!window.db || !window.firebaseFns) return;
+            const { collection, getDocs, query, orderBy } = window.firebaseFns;
+            try {
+                const q = query(collection(window.db, "mobcash_transactions"), orderBy("timestamp", "desc"));
+                const snap = await getDocs(q);
+                const list = document.getElementById('mobcash-history-list');
+                list.innerHTML = '';
+                
+                if(snap.empty) {
+                    list.innerHTML = '<p class="text-xs text-slate-500 text-center py-3">ගනුදෙනු වාර්තා හමු නොවීය.</p>';
+                    return;
+                }
+
+                snap.forEach(d => {
+                    const item = d.data();
+                    const isDep = item.type === 'Deposit';
+                    const color = isDep ? 'emerald' : 'rose';
+                    list.innerHTML += `
+                        <div class="p-3 bg-slate-950/80 border border-slate-800 rounded-xl flex justify-between items-center text-xs font-mono">
+                            <div>
+                                <span class="font-bold text-white">${item.type}</span>
+                                <span class="text-${color}-400 ml-1">(${item.userId})</span>
+                                <p class="text-[10px] text-slate-500 mt-0.5">${item.date || ''}</p>
+                            </div>
+                            <div class="text-${color}-400 font-bold">රු. ${item.amount.toLocaleString()}</div>
+                        </div>
+                    `;
+                });
+            } catch(err) {
+                console.error("Error syncing logs:", err);
+            }
         }
     </script>
 </body>
