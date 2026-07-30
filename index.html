@@ -22,32 +22,85 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .sinhala-text { font-family: 'Noto Sans Sinhala', sans-serif; }
+        
         .glass-panel {
             background: linear-gradient(135deg, rgba(17, 24, 39, 0.75) 0%, rgba(11, 15, 25, 0.85) 100%);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
-        .action-circle-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        
+        .action-circle-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .action-circle-btn:hover { transform: translateY(-4px) scale(1.05); }
+        
+        /* Modal Animation */
+        .modal-enter { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
         }
-        .action-circle-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #030712; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #374151; }
     </style>
 </head>
-<body class="bg-darker text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex items-center justify-center min-h-screen p-4 sm:p-6">
+<body class="bg-darker text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex items-center justify-center min-h-screen p-4 sm:p-6 relative">
 
-    <!-- Mobile Frame Container for App Feel -->
-    <div class="w-full max-w-md glass-panel rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl flex flex-col h-[88vh] max-h-[900px] relative">
+    <!-- ============================================== -->
+    <!-- 1. LOGIN SCREEN -->
+    <!-- ============================================== -->
+    <div id="login-screen" class="w-full max-w-sm glass-panel rounded-3xl p-8 flex flex-col items-center shadow-2xl relative z-10 transition-all duration-500">
         
-        <!-- App Top Header with Mobcash Account ID -->
+        <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 mb-6">
+            <i class="fa-solid fa-wallet text-3xl"></i>
+        </div>
+        
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-extrabold text-white tracking-wider uppercase mb-1">Mobcash</h2>
+            <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">Secure Agent Login</p>
+        </div>
+
+        <form onsubmit="handleLogin(event)" class="w-full space-y-5">
+            <div>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Username</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <input type="text" id="login-username" placeholder="Enter username" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all focus:ring-1 focus:ring-indigo-500/50">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Password</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <input type="password" id="login-password" placeholder="Enter password" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all focus:ring-1 focus:ring-indigo-500/50">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-4 mt-2 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 transition-all text-sm uppercase tracking-wider mt-4">
+                Login Access
+            </button>
+        </form>
+
+        <p class="mt-6 text-[10px] text-slate-500 text-center">Only authorized admin-activated accounts are permitted.</p>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- 2. MOBCASH APP MAIN SCREEN (Hidden by default) -->
+    <!-- ============================================== -->
+    <div id="app-screen" class="hidden w-full max-w-md glass-panel rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl flex flex-col h-[88vh] max-h-[900px] relative z-10 transition-all duration-500">
+        
+        <!-- App Top Header -->
         <div class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/60">
             <div class="flex items-center space-x-3">
                 <div class="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
@@ -55,7 +108,6 @@
                 </div>
                 <div>
                     <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">Mobcash App</h1>
-                    <!-- Mobcash Account ID Display -->
                     <span class="text-[11px] font-mono text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20 inline-block mt-0.5">
                         ID: <span id="mobcash-account-id">MOB-LK-77492</span>
                     </span>
@@ -79,13 +131,12 @@
                 <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1.5 font-mono">Rs. <span id="main-balance-display">145,800.00</span></h3>
                 <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
                     <span>Status: <strong class="text-emerald-400">Active Terminal</strong></span>
-                    <span class="text-indigo-400 font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> Encrypted</span>
+                    <button onclick="handleLogout()" class="text-rose-400 hover:text-rose-300 font-bold px-2 py-1 bg-rose-500/10 rounded-lg"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
                 </div>
             </div>
 
             <!-- Action Circular Buttons Hub -->
             <div class="grid grid-cols-2 gap-4 py-2">
-                <!-- Deposit Circular Action Button -->
                 <button onclick="switchAppTab('deposit')" id="btn-tab-deposit" class="action-circle-btn p-5 rounded-2xl glass-panel border border-indigo-500/30 bg-indigo-950/20 flex flex-col items-center text-center group">
                     <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-xl shadow-lg shadow-emerald-600/30 mb-3 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-arrow-down-long"></i>
@@ -94,7 +145,6 @@
                     <span class="text-[10px] text-slate-400 mt-0.5">Top-up user balance</span>
                 </button>
 
-                <!-- Withdrawal Circular Action Button -->
                 <button onclick="switchAppTab('withdraw')" id="btn-tab-withdraw" class="action-circle-btn p-5 rounded-2xl glass-panel border border-slate-800 flex flex-col items-center text-center group">
                     <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-rose-600 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg shadow-rose-600/30 mb-3 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-arrow-up-long"></i>
@@ -104,7 +154,7 @@
                 </button>
             </div>
 
-            <!-- 1. DEPOSIT SECTION FORM -->
+            <!-- DEPOSIT SECTION -->
             <div id="section-deposit" class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl">
                 <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-circle-plus text-emerald-400 mr-2"></i> New Deposit Transaction</h3>
                 <form onsubmit="handleAppDeposit(event)" class="space-y-3.5">
@@ -120,7 +170,7 @@
                 </form>
             </div>
 
-            <!-- 2. WITHDRAWAL SECTION FORM (Hidden by default) -->
+            <!-- WITHDRAWAL SECTION (Hidden by default) -->
             <div id="section-withdraw" class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl hidden">
                 <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-circle-minus text-rose-400 mr-2"></i> New Withdrawal Request</h3>
                 <form onsubmit="handleAppWithdraw(event)" class="space-y-3.5">
@@ -145,7 +195,6 @@
 
                 <!-- History Cards Container -->
                 <div id="app-history-list" class="space-y-3">
-                    <!-- Default Initial History Card 1 -->
                     <div class="p-4 bg-slate-950/70 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3 shadow-lg hover:border-slate-700 transition-all">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold shrink-0">
@@ -164,7 +213,6 @@
                         </div>
                     </div>
 
-                    <!-- Default Initial History Card 2 -->
                     <div class="p-4 bg-slate-950/70 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3 shadow-lg hover:border-slate-700 transition-all">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-sm font-bold shrink-0">
@@ -187,22 +235,93 @@
 
         </div>
 
-        <!-- App Bottom Navigation Footer -->
         <div class="px-6 py-3 border-t border-slate-800/80 bg-slate-950/60 text-center">
             <p class="text-[11px] text-slate-400">Mobcash Gateway &bull; Secure Agent Portal</p>
         </div>
 
     </div>
 
+    <!-- ============================================== -->
+    <!-- 3. ERROR NOTIFICATION MODAL (Hidden by default) -->
+    <!-- ============================================== -->
+    <div id="error-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop Blur -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeErrorModal()"></div>
+        
+        <!-- Modal Card -->
+        <div class="relative glass-panel bg-slate-900/95 border border-rose-500/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-hidden">
+            <!-- Background Glow -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="flex flex-col items-center text-center mt-2">
+                <div class="w-16 h-16 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center justify-center text-rose-500 text-3xl mb-4 shadow-lg shadow-rose-500/20">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </div>
+                
+                <h3 class="text-lg font-bold text-white mb-3 sinhala-text tracking-wide">ලොගින් වීම අසාර්ථකයි!</h3>
+                
+                <div class="bg-rose-950/30 border border-rose-900/50 p-4 rounded-xl mb-6">
+                    <p class="text-sm text-rose-100/90 leading-relaxed sinhala-text font-medium">
+                        "මේ Mobcash එක ඇඩ්මින් විසින් සක්‍රිය කරනවා මැති අතර කරුණාකර ඇඩ්මින් විසින් සක්‍රිය කරන ලද ගිණුමක් සකසාගෙන ලොගින් වන්න."
+                    </p>
+                </div>
+                
+                <button onclick="closeErrorModal()" class="w-full py-3.5 rounded-xl font-bold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all text-sm uppercase tracking-wider">
+                    හරි (OK)
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- 4. JAVASCRIPT LOGIC -->
+    <!-- ============================================== -->
     <script>
         // Main Agent Float Balance & Record Count
         let currentMainBalance = 145800.00;
         let appRecordCount = 2;
 
+        // Login Handling Function
+        function handleLogin(e) {
+            e.preventDefault();
+            const uname = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+
+            // Check specific credentials
+            if (uname === 'admin' && pass === '1234') {
+                // Login Success
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('flex');
+            } else {
+                // Login Failed - Show Notice
+                document.getElementById('error-modal').classList.remove('hidden');
+            }
+        }
+
+        // Close Error Modal
+        function closeErrorModal() {
+            document.getElementById('error-modal').classList.add('hidden');
+        }
+
+        // Logout Function
+        function handleLogout() {
+            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('flex');
+            document.getElementById('login-screen').classList.remove('hidden');
+            
+            // Clear inputs
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        }
+
+        // Balance Display Update
         function updateBalanceDisplay() {
             document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
+        // Switch Tabs (Deposit / Withdraw)
         function switchAppTab(tab) {
             const depSection = document.getElementById('section-deposit');
             const wthSection = document.getElementById('section-withdraw');
@@ -226,121 +345,84 @@
             }
         }
 
+        // Handle Deposit
         function handleAppDeposit(e) {
             e.preventDefault();
             const userId = document.getElementById('app-dep-id').value;
             const amountInput = document.getElementById('app-dep-amount').value;
             const amount = parseFloat(amountInput);
 
-            if (amount <= 0) {
-                alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
-                return;
-            }
-
-            if (amount > currentMainBalance) {
-                alert('ප්‍රමාණවත් බැලන්ස් එකක් නොමැත! (Insufficient Balance)');
-                return;
-            }
+            if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
+            if (amount > currentMainBalance) return alert('ප්‍රමාණවත් බැලන්ස් එකක් නොමැත! (Insufficient Balance)');
 
             // Deduct from Main Balance
             currentMainBalance -= amount;
             updateBalanceDisplay();
 
-            const formattedAmount = amount.toLocaleString('en-US', {minimumFractionDigits: 2});
-            const now = new Date();
-            const options = { month: 'long', day: 'numeric', year: 'numeric' };
-            const dateStr = now.toLocaleDateString('en-US', options);
-            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            const fullDateTime = `${dateStr} - ${timeStr}`;
-
-            const historyList = document.getElementById('app-history-list');
-            const newCard = document.createElement('div');
-            // Beautiful distinct card animation/styling
-            newCard.className = 'p-4 bg-slate-950/70 border border-emerald-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl transform transition-all animate-pulse';
-            
-            newCard.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-sm font-bold shrink-0">
-                        <i class="fa-solid fa-arrow-down"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h5 class="font-bold text-white text-xs">Deposit</h5>
-                            <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">${userId}</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${fullDateTime}</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <span class="text-emerald-400 font-extrabold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-xl block">- Rs. ${formattedAmount}</span>
-                </div>
-            `;
-
-            // Prepend new card so it shows right at the top of history
-            historyList.prepend(newCard);
-            setTimeout(() => newCard.classList.remove('animate-pulse'), 1500);
-
-            appRecordCount++;
-            document.getElementById('app-history-count').innerText = `Total: ${appRecordCount} Records`;
-
+            addHistoryCard(userId, amount, 'Deposit');
             alert('Deposit සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
             e.target.reset();
         }
 
+        // Handle Withdraw
         function handleAppWithdraw(e) {
             e.preventDefault();
             const userId = document.getElementById('app-wth-id').value;
             const amountInput = document.getElementById('app-wth-amount').value;
             const amount = parseFloat(amountInput);
 
-            if (amount <= 0) {
-                alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
-                return;
-            }
+            if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
 
             // Add to Main Balance
             currentMainBalance += amount;
             updateBalanceDisplay();
 
+            addHistoryCard(userId, amount, 'Withdrawal');
+            alert('Withdrawal සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
+            e.target.reset();
+        }
+
+        // Add dynamically history card
+        function addHistoryCard(userId, amount, type) {
             const formattedAmount = amount.toLocaleString('en-US', {minimumFractionDigits: 2});
             const now = new Date();
-            const options = { month: 'long', day: 'numeric', year: 'numeric' };
-            const dateStr = now.toLocaleDateString('en-US', options);
+            const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             const fullDateTime = `${dateStr} - ${timeStr}`;
 
             const historyList = document.getElementById('app-history-list');
             const newCard = document.createElement('div');
-            // Beautiful distinct card animation/styling
-            newCard.className = 'p-4 bg-slate-950/70 border border-rose-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl transform transition-all animate-pulse';
+            
+            const isDep = type === 'Deposit';
+            const colorClass = isDep ? 'emerald' : 'rose';
+            const iconClass = isDep ? 'fa-arrow-down' : 'fa-arrow-up';
+            const sign = isDep ? '-' : '+';
+            
+            newCard.className = `p-4 bg-slate-950/70 border border-${colorClass}-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl transform transition-all animate-pulse`;
             
             newCard.innerHTML = `
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center text-sm font-bold shrink-0">
-                        <i class="fa-solid fa-arrow-up"></i>
+                    <div class="w-10 h-10 rounded-xl bg-${colorClass}-500/20 border border-${colorClass}-500/40 text-${colorClass}-400 flex items-center justify-center text-sm font-bold shrink-0">
+                        <i class="fa-solid ${iconClass}"></i>
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <h5 class="font-bold text-white text-xs">Withdrawal</h5>
-                            <span class="text-[9px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded">${userId}</span>
+                            <h5 class="font-bold text-white text-xs">${type}</h5>
+                            <span class="text-[9px] font-mono bg-${colorClass}-500/10 text-${colorClass}-400 border border-${colorClass}-500/20 px-1.5 py-0.5 rounded">${userId}</span>
                         </div>
                         <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${fullDateTime}</p>
                     </div>
                 </div>
                 <div class="text-right">
-                    <span class="text-rose-400 font-extrabold text-xs bg-rose-500/10 border border-rose-500/20 px-2.5 py-1.5 rounded-xl block">+ Rs. ${formattedAmount}</span>
+                    <span class="text-${colorClass}-400 font-extrabold text-xs bg-${colorClass}-500/10 border border-${colorClass}-500/20 px-2.5 py-1.5 rounded-xl block">${sign} Rs. ${formattedAmount}</span>
                 </div>
             `;
 
-            // Prepend new card so it shows right at the top of history
             historyList.prepend(newCard);
             setTimeout(() => newCard.classList.remove('animate-pulse'), 1500);
 
             appRecordCount++;
             document.getElementById('app-history-count').innerText = `Total: ${appRecordCount} Records`;
-
-            alert('Withdrawal සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
-            e.target.reset();
         }
     </script>
 </body>
