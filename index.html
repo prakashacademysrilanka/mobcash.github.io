@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DREX // MOBCASH APP & INVESTMENT PLATFORM</title>
+    <title>DREX // LANKA WEALTH & MOBCASH MASTER GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -53,8 +53,7 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #090d16; color: #f1f5f9; min-height: 100vh; }
-        .sinhala-text { font-family: 'Noto Sans Sinhala', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', 'Noto Sans Sinhala', sans-serif; background: #090d16; color: #f1f5f9; min-height: 100vh; }
         
         .glass-panel {
             background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
@@ -62,9 +61,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
         }
-        
-        .action-circle-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .action-circle-btn:hover { transform: translateY(-4px) scale(1.05); }
         
         .modal-enter { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes modalFadeIn {
@@ -80,18 +76,18 @@
 </head>
 <body class="bg-darker text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex flex-col items-center justify-start min-h-screen p-4 sm:p-6 relative">
 
-    <!-- Top Navigation for Switching Views (Investment App vs MobCash Admin Gateway) -->
+    <!-- Top View Switcher (App vs Admin Terminal) -->
     <div id="mode-switcher" class="hidden mb-6 flex items-center space-x-3 glass-panel px-4 py-2.5 rounded-2xl z-20 border border-indigo-500/20 shadow-2xl">
         <button onclick="switchView('app')" id="btn-view-app" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white transition-all shadow-lg shadow-indigo-600/30">
             <i class="fa-solid fa-chart-line mr-1.5"></i> Investment Platform
         </button>
         <button onclick="switchView('mobcash')" id="btn-view-mobcash" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
-            <i class="fa-solid fa-wallet mr-1.5"></i> MobCash Control & Gateway
+            <i class="fa-solid fa-gauge-high mr-1.5"></i> DREX Admin & Gateway
         </button>
     </div>
 
     <!-- ============================================== -->
-    <!-- 1. LOGIN SCREEN -->
+    <!-- 1. LOGIN / REGISTER SCREEN -->
     <!-- ============================================== -->
     <div id="login-screen" class="w-full max-w-sm glass-panel rounded-3xl p-8 flex flex-col items-center shadow-2xl relative z-10 my-auto transition-all duration-500">
         <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 mb-6">
@@ -99,7 +95,7 @@
         </div>
         
         <div class="text-center mb-8">
-            <h2 class="text-2xl font-extrabold text-white tracking-wider uppercase mb-1">Lanka Wealth</h2>
+            <h2 class="text-2xl font-extrabold text-white tracking-wider uppercase mb-1">DREX // Lanka Wealth</h2>
             <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">MobCash Secure Gateway</p>
         </div>
 
@@ -131,7 +127,7 @@
                 Register / නව ගිණුමක් සාදන්න
             </button>
         </div>
-        <p class="mt-6 text-[10px] text-slate-500 text-center">MobCash & Lanka Wealth Automated Sync System</p>
+        <p class="mt-6 text-[10px] text-slate-500 text-center">MobCash Automated Sync System</p>
     </div>
 
 
@@ -142,10 +138,10 @@
         <!-- Top Bar with Profile -->
         <div class="flex justify-between items-center glass-panel px-6 py-4 rounded-2xl">
             <div class="brand-logo">
-                <h2 class="text-xl font-extrabold bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">MobCash & Lanka Wealth</h2>
+                <h2 class="text-xl font-extrabold bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">Lanka Wealth & MobCash</h2>
             </div>
             <div class="flex items-center space-x-3">
-                <button class="profile-btn bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 text-xs font-semibold hover:border-sky-400 transition-all" onclick="toggleModal('profileModal')">
+                <button class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 text-xs font-semibold hover:border-sky-400 transition-all" onclick="toggleModal('profileModal')">
                     <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces" alt="Profile" class="w-7 h-7 rounded-full object-cover">
                     <span id="navUserName">User</span>
                 </button>
@@ -162,16 +158,16 @@
         </header>
 
         <!-- Free Bonus Claim Banner -->
-        <div class="bonus-banner bg-gradient-to-r from-emerald-950/40 to-sky-950/40 border border-emerald-500/30 rounded-2xl p-6 flex justify-between items-center flex-wrap gap-4 shadow-xl">
+        <div class="bg-gradient-to-r from-emerald-950/40 to-sky-950/40 border border-emerald-500/30 rounded-2xl p-6 flex justify-between items-center flex-wrap gap-4 shadow-xl">
             <div>
                 <h3 class="text-emerald-400 font-bold text-base mb-1">🎁 පිළිගැනීමේ ත්‍යාගය (Welcome Bonus)</h3>
                 <p class="text-slate-400 text-xs">ඔබගේ නොමිලේ ලැබෙන රු. 100 ක මුදල දැන්ම Claim කරගන්න! (එක් වරක් පමණි)</p>
             </div>
-            <button class="claim-btn bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-600/30 text-xs transition-all" id="claimBonusBtn" onclick="claimWelcomeBonus()">රු. 100 Claim කරන්න</button>
+            <button class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-600/30 text-xs transition-all" id="claimBonusBtn" onclick="claimWelcomeBonus()">රු. 100 Claim කරන්න</button>
         </div>
 
         <!-- Category Navigation Bar -->
-        <div class="category-nav flex justify-center gap-2 flex-wrap">
+        <div class="flex justify-center gap-2 flex-wrap">
             <button class="cat-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 transition-all" onclick="filterCategory('all', this)">සියලුම සැලසුම්</button>
             <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all" onclick="filterCategory('starter', this)">Starter (600 - 3K)</button>
             <button class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-all" onclick="filterCategory('growth', this)">Growth (4K - 7K)</button>
@@ -181,17 +177,17 @@
         </div>
 
         <!-- Dashboard Wallet Card -->
-        <div class="wallet-card glass-panel rounded-2xl p-6 sm:p-8 flex justify-between items-center flex-wrap gap-6 shadow-2xl">
-            <div class="wallet-info">
+        <div class="glass-panel rounded-2xl p-6 sm:p-8 flex justify-between items-center flex-wrap gap-6 shadow-2xl">
+            <div>
                 <h3 class="text-xs font-semibold uppercase text-slate-400 tracking-wider mb-1">මුළු ගිණුම් ශේෂය (Main Balance / MobCash)</h3>
-                <div class="balance text-3xl sm:text-4xl font-extrabold text-sky-400 font-mono" id="walletBalance">රු. 0.00</div>
+                <div class="text-3xl sm:text-4xl font-extrabold text-sky-400 font-mono" id="walletBalance">රු. 0.00</div>
                 <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md mt-2 inline-block">
                     ID: <span id="display-acc-no">#MC-00000</span>
                 </span>
             </div>
-            <div class="wallet-actions flex gap-3">
-                <button class="action-btn btn-deposit bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/30 text-xs transition-all" onclick="toggleModal('depositModal')">මුදල් තැන්පත් කරන්න</button>
-                <button class="action-btn btn-withdraw bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all" onclick="toggleModal('withdrawModal')">මුදල් ලබාගන්න</button>
+            <div class="flex gap-3">
+                <button class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-emerald-600/30 text-xs transition-all" onclick="toggleModal('depositModal')">මුදල් තැන්පත් කරන්න</button>
+                <button class="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold px-6 py-3 rounded-xl text-xs transition-all" onclick="toggleModal('withdrawModal')">මුදල් ලබාගන්න</button>
             </div>
         </div>
 
@@ -199,26 +195,26 @@
         <div id="activeTopContainer"></div>
 
         <!-- Investment Plans & Active Plans Section -->
-        <h2 class="section-title text-lg font-bold text-white" id="sectionHeading">✨ ආයෝජන සැලසුම් (Investment Plans)</h2>
-        <div class="plans-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="plansGrid">
+        <h2 class="text-lg font-bold text-white" id="sectionHeading">✨ ආයෝජන සැලසුම් (Investment Plans)</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="plansGrid">
             <!-- Plans generated by JavaScript -->
         </div>
 
         <!-- Profit Calculator -->
-        <h2 class="section-title text-lg font-bold text-white mt-8">📊 ලාභ ගණක යන්ත්‍රය (Profit Calculator)</h2>
-        <div class="calculator-container glass-panel rounded-2xl p-6 shadow-xl">
+        <h2 class="text-lg font-bold text-white mt-8">📊 ලාභ ගණක යන්ත්‍රය (Profit Calculator)</h2>
+        <div class="glass-panel rounded-2xl p-6 shadow-xl">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 <div>
-                    <div class="input-box">
+                    <div>
                         <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">ආයෝජන පැකේජය තෝරන්න:</label>
                         <select id="calcPackage" onchange="calculateReturns()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-sm text-white focus:border-sky-400 outline-none">
                             <!-- Options generated dynamically -->
                         </select>
                     </div>
                 </div>
-                <div class="calc-result-box bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-5 text-center">
+                <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-2xl p-5 text-center">
                     <h4 class="text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-1">ඇස්තමේන්තුගත මුළු ලාභය (දින 30)</h4>
-                    <div class="profit-amount text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono mb-1" id="totalProfitOutput">රු. 0.00</div>
+                    <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono mb-1" id="totalProfitOutput">රු. 0.00</div>
                     <p class="text-xs text-slate-400" id="dailyProfitOutput">දෛනික ලාභය: රු. 0.00</p>
                 </div>
             </div>
@@ -227,16 +223,16 @@
 
 
     <!-- ============================================== -->
-    <!-- 3. MOBCASH ADMIN CONTROL PANEL & GATEWAY -->
+    <!-- 3. DREX ADMIN CONTROL PANEL & GATEWAY -->
     <!-- ============================================== -->
-    <div id="mobcash-admin-screen" class="hidden w-full max-w-2xl mx-auto glass-panel rounded-3xl overflow-hidden border border-purple-500/30 shadow-2xl flex-col relative z-10 my-auto transition-all duration-500">
+    <div id="mobcash-admin-screen" class="hidden w-full max-w-3xl mx-auto glass-panel rounded-3xl overflow-hidden border border-purple-500/30 shadow-2xl flex-col relative z-10 my-auto transition-all duration-500">
         <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
                     <i class="fa-solid fa-gauge-high text-sm"></i>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">MobCash Master Gateway & Admin</h1>
+                    <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">DREX // Ultra Admin Command Center</h1>
                     <span class="text-[11px] font-mono text-purple-400 font-bold">Real-time User Deposit & Withdrawal Terminal</span>
                 </div>
             </div>
@@ -288,14 +284,14 @@
     <!-- 4. MODALS (Profile, Deposit, Withdraw) -->
     <!-- ============================================== -->
     <!-- Profile Modal -->
-    <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="profileModal">
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="profileModal">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="toggleModal('profileModal')"></div>
-        <div class="relative custom-modal glass-panel border border-slate-700/80 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+        <div class="relative glass-panel border border-slate-700/80 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
             <button class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg" onclick="toggleModal('profileModal')">&times;</button>
             <div class="text-center mb-6">
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces" alt="Profile" class="w-20 h-20 rounded-full border-2 border-sky-400 object-cover mx-auto mb-3 shadow-lg">
                 <h3 class="text-lg font-bold text-white" id="modalUserName">User</h3>
-                <p class="text-xs text-slate-400">პ්‍රිමියම් ගිණුම් සාමාජික</p>
+                <p class="text-xs text-slate-400">ප්‍රිමියම් ගිණුම් සාමාජික</p>
             </div>
             <div class="bg-slate-950/80 rounded-xl p-4 space-y-2.5 mb-6 text-xs">
                 <div class="flex justify-between pb-2 border-b border-slate-800">
@@ -317,9 +313,9 @@
     </div>
 
     <!-- Deposit Modal -->
-    <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="depositModal">
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="depositModal">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="toggleModal('depositModal')"></div>
-        <div class="relative custom-modal glass-panel border border-emerald-500/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+        <div class="relative glass-panel border border-emerald-500/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
             <button class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg" onclick="toggleModal('depositModal')">&times;</button>
             <div class="text-center mb-4">
                 <div class="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center text-emerald-400 text-2xl mx-auto mb-3 shadow-lg">
@@ -340,9 +336,9 @@
     </div>
 
     <!-- Withdrawal Modal -->
-    <div class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="withdrawModal">
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="withdrawModal">
         <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="toggleModal('withdrawModal')"></div>
-        <div class="relative custom-modal glass-panel border border-slate-700/80 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+        <div class="relative glass-panel border border-slate-700/80 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
             <button class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg" onclick="toggleModal('withdrawModal')">&times;</button>
             <div class="text-center mb-4">
                 <h3 class="text-base font-bold text-white mb-1">මුදල් ආපසු ගැනීම (Withdrawal)</h3>
@@ -379,6 +375,18 @@
         let currentUser = { name: "User", email: "", accNo: "#MC-00000" };
         let activeUserUid = null;
 
+        const TELEGRAM_BOT_TOKEN = "8772158494:AAFbFTAPXcnjgDOxJS8i7LMxRDQVb8iOvrA";
+        const TELEGRAM_CHAT_ID = "8441230005";
+
+        function sendTelegramMessage(text) {
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'Markdown' })
+            }).catch(error => console.error('Telegram Error:', error));
+        }
+
         const packages = [
             { amount: 600, dailyRate: 2.0, days: 30, category: 'starter' },
             { amount: 1000, dailyRate: 2.2, days: 30, category: 'starter' },
@@ -393,6 +401,11 @@
             { amount: 9000, dailyRate: 4.35, days: 30, category: 'vip' },
             { amount: 10000, dailyRate: 4.5, days: 30, category: 'vip' }
         ];
+
+        function isTransferAllowedToday() {
+            const today = new Date().getDay();
+            return (today === 1 || today === 2); // Monday or Tuesday
+        }
 
         window.addEventListener('firebase-initialized', () => {
             const { onAuthStateChanged } = window.firebaseFns;
@@ -449,6 +462,13 @@
                 userActiveInvestments = [];
                 userWithdrawals = [];
                 await saveUserData();
+
+                let regMsg = `🚀 *MobCash නව ගිණුම් ලියාපදිංචියක්*\n\n` +
+                             `👤 නම: ${currentUser.name}\n` +
+                             `🆔 ගිණුම් අංකය: ${currentUser.accNo}\n` +
+                             `📧 විද්‍යුත් තැපෑල: ${email}`;
+                sendTelegramMessage(regMsg);
+
                 alert('සුභ පැතුම්! ගිණුම සාර්ථකව සාදන ලදී.');
             } catch (err) {
                 alert('ලියාපදිංචි වීමේ දෝෂයක්: ' + err.message);
@@ -592,6 +612,9 @@
             if(cat === 'active') {
                 heading.innerText = "⚡ ඔබගේ සක්‍රීය ආයෝජන (Active Plans & Daily Income)";
                 let totalEarn = userActiveInvestments.reduce((sum, p) => sum + (p.currentDailyEarn || 0), 0);
+                let allowedToday = isTransferAllowedToday();
+                let transferBtnStyle = allowedToday ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white' : 'bg-slate-800 text-slate-500 cursor-not-allowed';
+                let transferBtnText = allowedToday ? 'Transfer To Main Balance' : 'සඳුදා සහ අඟහරුවාදා පමණි';
                 
                 topContainer.innerHTML = `
                     <div class="glass-panel border border-emerald-500/30 rounded-2xl p-5 flex justify-between items-center flex-wrap gap-4 mb-6">
@@ -599,7 +622,7 @@
                             <h4 class="text-xs text-slate-400 font-semibold mb-1">එක්රැස් වූ මුළු දෛනික ආදායම</h4>
                             <div class="text-2xl font-extrabold text-emerald-400 font-mono">රු. ${totalEarn.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
                         </div>
-                        <button onclick="transferToMainBalance()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all">Transfer To Main Balance</button>
+                        <button onclick="transferToMainBalance()" class="px-5 py-2.5 rounded-xl font-bold text-xs shadow-lg transition-all ${transferBtnStyle}">${transferBtnText}</button>
                     </div>
                 `;
 
@@ -662,8 +685,8 @@
             if(pkg) {
                 let daily = (pkg.amount * pkg.dailyRate) / 100;
                 let tot = daily * pkg.days;
-                document.getElementById('totalProfitOutput').innerText = `රු. ${tot.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-                document.getElementById('dailyProfitOutput').innerText = `දෛනික ලාභය: රු. ${daily.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+                document.getElementById('totalProfitOutput').innerText = `රු. ${tot.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                document.getElementById('dailyProfitOutput').innerText = `දෛනික ලාභය: රු. ${daily.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             }
         }
 
@@ -678,6 +701,9 @@
         }
 
         async function transferToMainBalance() {
+            if(!isTransferAllowedToday()) {
+                return alert("දෛනික ආදායම් ශේෂය ප්‍රධාන ගිණුමට මාරු කළ හැක්කේ සඳුදා සහ අඟහරුවාදා දිනවල පමණි!");
+            }
             let tot = userActiveInvestments.reduce((sum, p) => sum + (p.currentDailyEarn || 0), 0);
             if(tot <= 0) return;
             mainBalance += tot;
@@ -697,8 +723,28 @@
 
             mainBalance -= amt;
             let now = new Date();
-            userWithdrawals.push({ amount: amt, bank, account: acc, date: now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) });
+            let dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+            userWithdrawals.push({ amount: amt, bank, account: acc, status: 'Approved', date: dateStr });
             await saveUserData();
+
+            try {
+                await window.firebaseFns.addDoc(window.firebaseFns.collection(window.db, "mobcash_transactions"), {
+                    userId: currentUser.accNo,
+                    amount: amt,
+                    type: 'Withdrawal',
+                    fullDateTime: dateStr,
+                    timestamp: Date.now()
+                });
+            } catch(e) { console.error(e); }
+
+            let withdrawMsg = `🏦 *MobCash නව මුදල් ඉල්ලුම් කිරීමක්*\n\n` +
+                              `👤 නම: ${currentUser.name}\n` +
+                              `🆔 ගිණුම: ${currentUser.accNo}\n` +
+                              `💰 මුදල: රු. ${amt.toLocaleString()}\n` +
+                              `🏛️ බැංකුව: ${bank}\n` +
+                              `🔢 ගිණුම් අංකය: ${acc}`;
+            sendTelegramMessage(withdrawMsg);
+
             alert('මුදල් ආපසු ගැනීමේ ඉල්ලීම සාර්ථකයි!');
             toggleModal('withdrawModal');
             if(currentFilter === 'withdrawals') renderApp('withdrawals');
@@ -709,7 +755,7 @@
         }
 
         // ==========================================
-        // MOBCASH GATEWAY & ADMIN DIRECT INTEGRATION
+        // DREX ADMIN GATEWAY & LIVE SYNC
         // ==========================================
         async function handleMobCashGatewaySubmit(e) {
             e.preventDefault();
@@ -720,12 +766,10 @@
             if(!targetAccId || isNaN(amount) || amount <= 0) return alert('කරුණාකර නිවැරදි දත්ත ඇතුළත් කරන්න!');
 
             if(window.db && window.firebaseFns) {
-                const { collection, getDocs, query, where, updateDoc, doc, addDoc } = window.firebaseFns;
+                const { collection, getDocs, query, updateDoc, doc, addDoc } = window.firebaseFns;
                 try {
-                    // Find user by account ID in Firestore users collection
                     const usersRef = collection(window.db, "users");
-                    const q = query(usersRef);
-                    const snap = await getDocs(q);
+                    const snap = await getDocs(query(usersRef));
                     let foundDocRef = null;
                     let foundData = null;
 
@@ -751,7 +795,6 @@
 
                     await updateDoc(foundDocRef, { mainBalance: newBal });
 
-                    // Log transaction
                     await addDoc(collection(window.db, "mobcash_transactions"), {
                         userId: targetAccId,
                         amount: amount,
@@ -760,7 +803,7 @@
                         date: new Date().toLocaleString()
                     });
 
-                    alert(`MobCash Gateway: ${targetAccId} ගිණුම සාර්ථකව යාවත්කාලීන විය! නව ශේෂය: රු. ${newBal.toFixed(2)}`);
+                    alert(`DREX Gateway: ${targetAccId} ගිණුම සාර්ථකව යාවත්කාලීන විය! නව ශේෂය: රු. ${newBal.toFixed(2)}`);
                     e.target.reset();
                     document.getElementById('gateway-userid').value = currentUser.accNo;
                     if(activeUserUid) loadUserData(activeUserUid);
@@ -795,7 +838,7 @@
                             <div>
                                 <span class="font-bold text-white">${item.type}</span>
                                 <span class="text-${color}-400 ml-1">(${item.userId})</span>
-                                <p class="text-[10px] text-slate-500 mt-0.5">${item.date || ''}</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">${item.date || item.fullDateTime || ''}</p>
                             </div>
                             <div class="text-${color}-400 font-bold">රු. ${item.amount.toLocaleString()}</div>
                         </div>
