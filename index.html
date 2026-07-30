@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="si" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREX // MOBCASH APP TERMINAL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darker: '#030712',
+                        cardbg: '#0b0f19',
+                        accent: '#6366f1',
+                        neon: '#a855f7'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.75) 0%, rgba(11, 15, 25, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+        .action-circle-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-circle-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+    </style>
+</head>
+<body class="bg-darker text-slate-100 antialiased selection:bg-indigo-500 selection:text-white flex items-center justify-center min-h-screen p-4 sm:p-6">
+
+    <!-- Mobile Frame Container for App Feel -->
+    <div class="w-full max-w-md glass-panel rounded-3xl overflow-hidden border border-slate-700/50 shadow-2xl flex flex-col h-[88vh] max-h-[900px] relative">
+        
+        <!-- App Top Header with Mobcash Account ID -->
+        <div class="px-6 py-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/60">
+            <div class="flex items-center space-x-3">
+                <div class="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
+                    <i class="fa-solid fa-wallet text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-xs tracking-wider uppercase text-white">Mobcash App</h1>
+                    <!-- Mobcash Account ID Display -->
+                    <span class="text-[11px] font-mono text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20 inline-block mt-0.5">
+                        ID: <span id="mobcash-account-id">MOB-LK-77492</span>
+                    </span>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-end">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse"></span> Online
+                </span>
+                <span class="text-[9px] text-slate-400 uppercase font-mono">Secure Node</span>
+            </div>
+        </div>
+
+        <!-- App Main Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+            <!-- Balance Quick Card -->
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/40 border border-indigo-500/20 relative overflow-hidden shadow-xl">
+                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Wallet Balance</p>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1.5 font-mono">Rs. <span id="main-balance-display">145,800.00</span></h3>
+                <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
+                    <span>Status: <strong class="text-emerald-400">Active Terminal</strong></span>
+                    <span class="text-indigo-400 font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> Encrypted</span>
+                </div>
+            </div>
+
+            <!-- Action Circular Buttons Hub -->
+            <div class="grid grid-cols-2 gap-4 py-2">
+                <!-- Deposit Circular Action Button -->
+                <button onclick="switchAppTab('deposit')" id="btn-tab-deposit" class="action-circle-btn p-5 rounded-2xl glass-panel border border-indigo-500/30 bg-indigo-950/20 flex flex-col items-center text-center group">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white text-xl shadow-lg shadow-emerald-600/30 mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-arrow-down-long"></i>
+                    </div>
+                    <span class="font-bold text-white text-sm">Deposit</span>
+                    <span class="text-[10px] text-slate-400 mt-0.5">Top-up user balance</span>
+                </button>
+
+                <!-- Withdrawal Circular Action Button -->
+                <button onclick="switchAppTab('withdraw')" id="btn-tab-withdraw" class="action-circle-btn p-5 rounded-2xl glass-panel border border-slate-800 flex flex-col items-center text-center group">
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-rose-600 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg shadow-rose-600/30 mb-3 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-arrow-up-long"></i>
+                    </div>
+                    <span class="font-bold text-white text-sm">Withdraw</span>
+                    <span class="text-[10px] text-slate-400 mt-0.5">Process payouts</span>
+                </button>
+            </div>
+
+            <!-- 1. DEPOSIT SECTION FORM -->
+            <div id="section-deposit" class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl">
+                <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-circle-plus text-emerald-400 mr-2"></i> New Deposit Transaction</h3>
+                <form onsubmit="handleAppDeposit(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">User Account ID</label>
+                        <input type="text" id="app-dep-id" placeholder="e.g. #USR-1001" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Deposit Amount (Rs.)</label>
+                        <input type="number" id="app-dep-amount" placeholder="Enter amount" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-emerald-500 outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-600/30 transition-all text-sm mt-1">Execute Deposit</button>
+                </form>
+            </div>
+
+            <!-- 2. WITHDRAWAL SECTION FORM (Hidden by default) -->
+            <div id="section-withdraw" class="glass-panel rounded-2xl p-5 space-y-4 shadow-xl hidden">
+                <h3 class="text-sm font-bold text-white flex items-center"><i class="fa-solid fa-circle-minus text-rose-400 mr-2"></i> New Withdrawal Request</h3>
+                <form onsubmit="handleAppWithdraw(event)" class="space-y-3.5">
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">User Account ID</label>
+                        <input type="text" id="app-wth-id" placeholder="e.g. #USR-1001" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-rose-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Withdrawal Amount (Rs.)</label>
+                        <input type="number" id="app-wth-amount" placeholder="Enter amount" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-sm text-white focus:border-rose-500 outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-lg shadow-rose-600/30 transition-all text-sm mt-1">Process Withdrawal</button>
+                </form>
+            </div>
+
+            <!-- Transaction History Cards Hub -->
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-2 text-indigo-400"></i> Transaction History Cards</h4>
+                    <span class="text-[10px] text-slate-400 font-medium" id="app-history-count">Total: 2 Records</span>
+                </div>
+
+                <!-- History Cards Container -->
+                <div id="app-history-list" class="space-y-3">
+                    <!-- Default Initial History Card 1 -->
+                    <div class="p-4 bg-slate-950/70 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3 shadow-lg hover:border-slate-700 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold shrink-0">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h5 class="font-bold text-white text-xs">Deposit</h5>
+                                    <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">#USR-1001</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> July 30, 2026 - 02:10 PM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-emerald-400 font-extrabold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-xl block">- Rs. 5,000.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Default Initial History Card 2 -->
+                    <div class="p-4 bg-slate-950/70 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3 shadow-lg hover:border-slate-700 transition-all">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-sm font-bold shrink-0">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h5 class="font-bold text-white text-xs">Withdrawal</h5>
+                                    <span class="text-[9px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded">#USR-1002</span>
+                                </div>
+                                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> July 30, 2026 - 01:25 PM</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-rose-400 font-extrabold text-xs bg-rose-500/10 border border-rose-500/20 px-2.5 py-1.5 rounded-xl block">+ Rs. 2,500.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- App Bottom Navigation Footer -->
+        <div class="px-6 py-3 border-t border-slate-800/80 bg-slate-950/60 text-center">
+            <p class="text-[11px] text-slate-400">Mobcash Gateway &bull; Secure Agent Portal</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Main Agent Float Balance & Record Count
+        let currentMainBalance = 145800.00;
+        let appRecordCount = 2;
+
+        function updateBalanceDisplay() {
+            document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function switchAppTab(tab) {
+            const depSection = document.getElementById('section-deposit');
+            const wthSection = document.getElementById('section-withdraw');
+            const btnDep = document.getElementById('btn-tab-deposit');
+            const btnWth = document.getElementById('btn-tab-withdraw');
+
+            if(tab === 'deposit') {
+                depSection.classList.remove('hidden');
+                wthSection.classList.add('hidden');
+                btnDep.classList.add('border-indigo-500/30', 'bg-indigo-950/20');
+                btnDep.classList.remove('border-slate-800');
+                btnWth.classList.add('border-slate-800');
+                btnWth.classList.remove('border-rose-500/30', 'bg-rose-950/20');
+            } else {
+                depSection.classList.add('hidden');
+                wthSection.classList.remove('hidden');
+                btnWth.classList.add('border-rose-500/30', 'bg-rose-950/20');
+                btnWth.classList.remove('border-slate-800');
+                btnDep.classList.add('border-slate-800');
+                btnDep.classList.remove('border-indigo-500/30', 'bg-indigo-950/20');
+            }
+        }
+
+        function handleAppDeposit(e) {
+            e.preventDefault();
+            const userId = document.getElementById('app-dep-id').value;
+            const amountInput = document.getElementById('app-dep-amount').value;
+            const amount = parseFloat(amountInput);
+
+            if (amount <= 0) {
+                alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
+                return;
+            }
+
+            if (amount > currentMainBalance) {
+                alert('ප්‍රමාණවත් බැලන්ස් එකක් නොමැත! (Insufficient Balance)');
+                return;
+            }
+
+            // Deduct from Main Balance
+            currentMainBalance -= amount;
+            updateBalanceDisplay();
+
+            const formattedAmount = amount.toLocaleString('en-US', {minimumFractionDigits: 2});
+            const now = new Date();
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const dateStr = now.toLocaleDateString('en-US', options);
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const fullDateTime = `${dateStr} - ${timeStr}`;
+
+            const historyList = document.getElementById('app-history-list');
+            const newCard = document.createElement('div');
+            // Beautiful distinct card animation/styling
+            newCard.className = 'p-4 bg-slate-950/70 border border-emerald-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl transform transition-all animate-pulse';
+            
+            newCard.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-sm font-bold shrink-0">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h5 class="font-bold text-white text-xs">Deposit</h5>
+                            <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">${userId}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${fullDateTime}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-emerald-400 font-extrabold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-xl block">- Rs. ${formattedAmount}</span>
+                </div>
+            `;
+
+            // Prepend new card so it shows right at the top of history
+            historyList.prepend(newCard);
+            setTimeout(() => newCard.classList.remove('animate-pulse'), 1500);
+
+            appRecordCount++;
+            document.getElementById('app-history-count').innerText = `Total: ${appRecordCount} Records`;
+
+            alert('Deposit සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
+            e.target.reset();
+        }
+
+        function handleAppWithdraw(e) {
+            e.preventDefault();
+            const userId = document.getElementById('app-wth-id').value;
+            const amountInput = document.getElementById('app-wth-amount').value;
+            const amount = parseFloat(amountInput);
+
+            if (amount <= 0) {
+                alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
+                return;
+            }
+
+            // Add to Main Balance
+            currentMainBalance += amount;
+            updateBalanceDisplay();
+
+            const formattedAmount = amount.toLocaleString('en-US', {minimumFractionDigits: 2});
+            const now = new Date();
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const dateStr = now.toLocaleDateString('en-US', options);
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const fullDateTime = `${dateStr} - ${timeStr}`;
+
+            const historyList = document.getElementById('app-history-list');
+            const newCard = document.createElement('div');
+            // Beautiful distinct card animation/styling
+            newCard.className = 'p-4 bg-slate-950/70 border border-rose-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl transform transition-all animate-pulse';
+            
+            newCard.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center text-sm font-bold shrink-0">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h5 class="font-bold text-white text-xs">Withdrawal</h5>
+                            <span class="text-[9px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded">${userId}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${fullDateTime}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="text-rose-400 font-extrabold text-xs bg-rose-500/10 border border-rose-500/20 px-2.5 py-1.5 rounded-xl block">+ Rs. ${formattedAmount}</span>
+                </div>
+            `;
+
+            // Prepend new card so it shows right at the top of history
+            historyList.prepend(newCard);
+            setTimeout(() => newCard.classList.remove('animate-pulse'), 1500);
+
+            appRecordCount++;
+            document.getElementById('app-history-count').innerText = `Total: ${appRecordCount} Records`;
+
+            alert('Withdrawal සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>
