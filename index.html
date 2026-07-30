@@ -36,7 +36,6 @@
         .action-circle-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .action-circle-btn:hover { transform: translateY(-4px) scale(1.05); }
         
-        /* Modal Animation */
         .modal-enter { animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes modalFadeIn {
             from { opacity: 0; transform: scale(0.95) translateY(10px); }
@@ -72,7 +71,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <input type="text" id="login-username" placeholder="Enter username" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all focus:ring-1 focus:ring-indigo-500/50">
+                    <input type="text" id="login-username" placeholder="Enter username (admin / super)" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all focus:ring-1 focus:ring-indigo-500/50">
                 </div>
             </div>
             
@@ -82,7 +81,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                         <i class="fa-solid fa-lock"></i>
                     </div>
-                    <input type="password" id="login-password" placeholder="Enter password" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all focus:ring-1 focus:ring-indigo-500/50">
+                    <input type="password" id="login-password" placeholder="Enter password (1234)" required class="w-full bg-slate-950/90 border border-slate-800 rounded-xl pl-10 pr-3 py-3.5 text-sm text-white focus:border-indigo-500 outline-none transition-all focus:ring-1 focus:ring-indigo-500/50">
                 </div>
             </div>
 
@@ -113,11 +112,17 @@
                     </span>
                 </div>
             </div>
-            <div class="text-right">
-                <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-end">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse"></span> Online
-                </span>
-                <span class="text-[9px] text-slate-400 uppercase font-mono">Secure Node</span>
+            <div class="text-right flex items-center space-x-2">
+                <div>
+                    <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-end">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse"></span> Online
+                    </span>
+                    <span class="text-[9px] text-slate-400 uppercase font-mono block" id="logged-user-tag">Admin</span>
+                </div>
+                <!-- Top Header Logout Icon Button -->
+                <button onclick="handleLogout()" title="Logout" class="w-8 h-8 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center hover:bg-rose-500/20 transition-all ml-1">
+                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                </button>
             </div>
         </div>
 
@@ -128,10 +133,10 @@
             <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900/60 to-purple-950/40 border border-indigo-500/20 relative overflow-hidden shadow-xl">
                 <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Wallet Balance</p>
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1.5 font-mono">Rs. <span id="main-balance-display">145,800.00</span></h3>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1.5 font-mono">Rs. <span id="main-balance-display">0.00</span></h3>
                 <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
                     <span>Status: <strong class="text-emerald-400">Active Terminal</strong></span>
-                    <button onclick="handleLogout()" class="text-rose-400 hover:text-rose-300 font-bold px-2 py-1 bg-rose-500/10 rounded-lg"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
+                    <span class="text-indigo-400 font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> Secured</span>
                 </div>
             </div>
 
@@ -190,53 +195,23 @@
             <div class="space-y-3 pt-2">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-2 text-indigo-400"></i> Transaction History Cards</h4>
-                    <span class="text-[10px] text-slate-400 font-medium" id="app-history-count">Total: 2 Records</span>
+                    <span class="text-[10px] text-slate-400 font-medium" id="app-history-count">Total: 0 Records</span>
                 </div>
 
                 <!-- History Cards Container -->
                 <div id="app-history-list" class="space-y-3">
-                    <div class="p-4 bg-slate-950/70 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3 shadow-lg hover:border-slate-700 transition-all">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold shrink-0">
-                                <i class="fa-solid fa-arrow-down"></i>
-                            </div>
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <h5 class="font-bold text-white text-xs">Deposit</h5>
-                                    <span class="text-[9px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded">#USR-1001</span>
-                                </div>
-                                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> July 30, 2026 - 02:10 PM</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-emerald-400 font-extrabold text-xs bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-xl block">- Rs. 5,000.00</span>
-                        </div>
-                    </div>
-
-                    <div class="p-4 bg-slate-950/70 border border-slate-800/90 rounded-2xl flex items-center justify-between gap-3 shadow-lg hover:border-slate-700 transition-all">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-sm font-bold shrink-0">
-                                <i class="fa-solid fa-arrow-up"></i>
-                            </div>
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <h5 class="font-bold text-white text-xs">Withdrawal</h5>
-                                    <span class="text-[9px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20 px-1.5 py-0.5 rounded">#USR-1002</span>
-                                </div>
-                                <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> July 30, 2026 - 01:25 PM</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-rose-400 font-extrabold text-xs bg-rose-500/10 border border-rose-500/20 px-2.5 py-1.5 rounded-xl block">+ Rs. 2,500.00</span>
-                        </div>
-                    </div>
+                    <!-- History will populate here dynamically -->
                 </div>
             </div>
 
         </div>
 
-        <div class="px-6 py-3 border-t border-slate-800/80 bg-slate-950/60 text-center">
-            <p class="text-[11px] text-slate-400">Mobcash Gateway &bull; Secure Agent Portal</p>
+        <!-- App Footer with Logout Button -->
+        <div class="px-6 py-3 border-t border-slate-800/80 bg-slate-950/60 flex items-center justify-between">
+            <p class="text-[11px] text-slate-400">Mobcash Gateway</p>
+            <button onclick="handleLogout()" class="px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 text-xs font-bold flex items-center transition-all">
+                <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Logout
+            </button>
         </div>
 
     </div>
@@ -245,12 +220,9 @@
     <!-- 3. ERROR NOTIFICATION MODAL (Hidden by default) -->
     <!-- ============================================== -->
     <div id="error-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop Blur -->
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeErrorModal()"></div>
         
-        <!-- Modal Card -->
         <div class="relative glass-panel bg-slate-900/95 border border-rose-500/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-hidden">
-            <!-- Background Glow -->
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
             
             <div class="flex flex-col items-center text-center mt-2">
@@ -275,53 +247,84 @@
 
 
     <!-- ============================================== -->
-    <!-- 4. JAVASCRIPT LOGIC -->
+    <!-- 4. JAVASCRIPT LOGIC (With LocalStorage Persistence) -->
     <!-- ============================================== -->
     <script>
-        // Main Agent Float Balance & Record Count
-        let currentMainBalance = 145800.00;
-        let appRecordCount = 2;
+        // Load stored balance & history or initialize defaults
+        let currentMainBalance = localStorage.getItem('mob_balance') !== null ? parseFloat(localStorage.getItem('mob_balance')) : null;
+        let loggedUserRole = localStorage.getItem('mob_user') || null;
 
-        // Login Handling Function
-        function handleLogin(e) {
-            e.preventDefault();
-            const uname = document.getElementById('login-username').value;
-            const pass = document.getElementById('login-password').value;
-
-            // Check specific credentials
-            if (uname === 'admin' && pass === '1234') {
-                // Login Success
+        // Auto-login check if session data exists
+        window.addEventListener('DOMContentLoaded', () => {
+            if (loggedUserRole) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('app-screen').classList.add('flex');
+                document.getElementById('logged-user-tag').innerText = loggedUserRole.toUpperCase();
+                updateBalanceDisplay();
+                loadHistoryFromStorage();
+            }
+        });
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const uname = document.getElementById('login-username').value.trim().toLowerCase();
+            const pass = document.getElementById('login-password').value;
+
+            if (pass === '1234') {
+                if (uname === 'admin') {
+                    loggedUserRole = 'admin';
+                    // If balance not set previously, set default 100000 for admin
+                    if (localStorage.getItem('mob_balance') === null) {
+                        currentMainBalance = 100000.00;
+                        localStorage.setItem('mob_balance', currentMainBalance);
+                    }
+                    localStorage.setItem('mob_user', loggedUserRole);
+                    initAppSession('Admin');
+                } else if (uname === 'super') {
+                    loggedUserRole = 'super';
+                    if (localStorage.getItem('mob_balance') === null) {
+                        currentMainBalance = 0.00;
+                        localStorage.setItem('mob_balance', currentMainBalance);
+                    }
+                    localStorage.setItem('mob_user', loggedUserRole);
+                    initAppSession('Super');
+                } else {
+                    document.getElementById('error-modal').classList.remove('hidden');
+                }
             } else {
-                // Login Failed - Show Notice
                 document.getElementById('error-modal').classList.remove('hidden');
             }
         }
 
-        // Close Error Modal
+        function initAppSession(roleName) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            document.getElementById('app-screen').classList.add('flex');
+            document.getElementById('logged-user-tag').innerText = roleName;
+            updateBalanceDisplay();
+            loadHistoryFromStorage();
+        }
+
         function closeErrorModal() {
             document.getElementById('error-modal').classList.add('hidden');
         }
 
-        // Logout Function
+        // Logout function (Does NOT clear balance or history records)
         function handleLogout() {
             document.getElementById('app-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('flex');
             document.getElementById('login-screen').classList.remove('hidden');
             
-            // Clear inputs
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
         }
 
-        // Balance Display Update
         function updateBalanceDisplay() {
             document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            localStorage.setItem('mob_balance', currentMainBalance);
         }
 
-        // Switch Tabs (Deposit / Withdraw)
         function switchAppTab(tab) {
             const depSection = document.getElementById('section-deposit');
             const wthSection = document.getElementById('section-withdraw');
@@ -345,7 +348,6 @@
             }
         }
 
-        // Handle Deposit
         function handleAppDeposit(e) {
             e.preventDefault();
             const userId = document.getElementById('app-dep-id').value;
@@ -355,16 +357,14 @@
             if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
             if (amount > currentMainBalance) return alert('ප්‍රමාණවත් බැලන්ස් එකක් නොමැත! (Insufficient Balance)');
 
-            // Deduct from Main Balance
             currentMainBalance -= amount;
             updateBalanceDisplay();
 
-            addHistoryCard(userId, amount, 'Deposit');
+            saveAndAddHistoryCard(userId, amount, 'Deposit');
             alert('Deposit සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
             e.target.reset();
         }
 
-        // Handle Withdraw
         function handleAppWithdraw(e) {
             e.preventDefault();
             const userId = document.getElementById('app-wth-id').value;
@@ -373,56 +373,71 @@
 
             if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
 
-            // Add to Main Balance
             currentMainBalance += amount;
             updateBalanceDisplay();
 
-            addHistoryCard(userId, amount, 'Withdrawal');
+            saveAndAddHistoryCard(userId, amount, 'Withdrawal');
             alert('Withdrawal සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
             e.target.reset();
         }
 
-        // Add dynamically history card
-        function addHistoryCard(userId, amount, type) {
-            const formattedAmount = amount.toLocaleString('en-US', {minimumFractionDigits: 2});
+        function saveAndAddHistoryCard(userId, amount, type) {
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             const fullDateTime = `${dateStr} - ${timeStr}`;
 
-            const historyList = document.getElementById('app-history-list');
-            const newCard = document.createElement('div');
+            const record = { userId, amount, type, fullDateTime };
             
-            const isDep = type === 'Deposit';
-            const colorClass = isDep ? 'emerald' : 'rose';
-            const iconClass = isDep ? 'fa-arrow-down' : 'fa-arrow-up';
-            const sign = isDep ? '-' : '+';
+            // Get existing history from localStorage
+            let historyList = JSON.parse(localStorage.getItem('mob_history')) || [];
+            historyList.unshift(record); // Add to beginning
+            localStorage.setItem('mob_history', JSON.stringify(historyList));
+
+            renderHistoryCards();
+        }
+
+        function loadHistoryFromStorage() {
+            renderHistoryCards();
+        }
+
+        function renderHistoryCards() {
+            const historyListContainer = document.getElementById('app-history-list');
+            historyListContainer.innerHTML = '';
             
-            newCard.className = `p-4 bg-slate-950/70 border border-${colorClass}-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl transform transition-all animate-pulse`;
+            let historyList = JSON.parse(localStorage.getItem('mob_history')) || [];
             
-            newCard.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-${colorClass}-500/20 border border-${colorClass}-500/40 text-${colorClass}-400 flex items-center justify-center text-sm font-bold shrink-0">
-                        <i class="fa-solid ${iconClass}"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h5 class="font-bold text-white text-xs">${type}</h5>
-                            <span class="text-[9px] font-mono bg-${colorClass}-500/10 text-${colorClass}-400 border border-${colorClass}-500/20 px-1.5 py-0.5 rounded">${userId}</span>
+            document.getElementById('app-history-count').innerText = `Total: ${historyList.length} Records`;
+
+            historyList.forEach(item => {
+                const formattedAmount = item.amount.toLocaleString('en-US', {minimumFractionDigits: 2});
+                const isDep = item.type === 'Deposit';
+                const colorClass = isDep ? 'emerald' : 'rose';
+                const iconClass = isDep ? 'fa-arrow-down' : 'fa-arrow-up';
+                const sign = isDep ? '-' : '+';
+
+                const cardDiv = document.createElement('div');
+                cardDiv.className = `p-4 bg-slate-950/70 border border-${colorClass}-500/30 rounded-2xl flex items-center justify-between gap-3 shadow-xl`;
+                
+                cardDiv.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-${colorClass}-500/20 border border-${colorClass}-500/40 text-${colorClass}-400 flex items-center justify-center text-sm font-bold shrink-0">
+                            <i class="fa-solid ${iconClass}"></i>
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${fullDateTime}</p>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h5 class="font-bold text-white text-xs">${item.type}</h5>
+                                <span class="text-[9px] font-mono bg-${colorClass}-500/10 text-${colorClass}-400 border border-${colorClass}-500/20 px-1.5 py-0.5 rounded">${item.userId}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1"><i class="fa-regular fa-calendar mr-1"></i> ${item.fullDateTime}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="text-right">
-                    <span class="text-${colorClass}-400 font-extrabold text-xs bg-${colorClass}-500/10 border border-${colorClass}-500/20 px-2.5 py-1.5 rounded-xl block">${sign} Rs. ${formattedAmount}</span>
-                </div>
-            `;
-
-            historyList.prepend(newCard);
-            setTimeout(() => newCard.classList.remove('animate-pulse'), 1500);
-
-            appRecordCount++;
-            document.getElementById('app-history-count').innerText = `Total: ${appRecordCount} Records`;
+                    <div class="text-right">
+                        <span class="text-${colorClass}-400 font-extrabold text-xs bg-${colorClass}-500/10 border border-${colorClass}-500/20 px-2.5 py-1.5 rounded-xl block">${sign} Rs. ${formattedAmount}</span>
+                    </div>
+                `;
+                historyListContainer.appendChild(cardDiv);
+            });
         }
     </script>
 </body>
