@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Firebase App (Core SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -213,6 +218,18 @@
     </div>
 
     <script>
+        // FIREBASE CONFIGURATION (Lanka Wealth Project)
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2GINmNAATE3gtlOuI_DYLG16x6MFI1c0",
+            projectId: "lanka-wealth",
+            storageBucket: "lanka-wealth.firebasestorage.app",
+            appId: "1:36347966897:android:88ecff2bb506eaa6bab990"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         const TELEGRAM_BOT_TOKEN = "8772158494:AAFbFTAPXcnjgDOxJS8i7LMxRDQVb8iOvrA";
         const TELEGRAM_CHAT_ID = "8441230005";
 
@@ -327,6 +344,11 @@
             updateBalanceDisplay();
 
             saveAndAddHistoryCard(userId, amount, 'Deposit');
+
+            // Telegram Notification for Deposit
+            let depMsg = `💳 *නව තැන්පත් කිරීමක් (Mobcash Deposit)*\n\n👤 ගිණුම් අංකය: ${userId}\n💰 මුදල: රු. ${amount.toLocaleString()}`;
+            sendTelegramMessage(depMsg);
+
             alert('Deposit සාර්ථකයි! අදාළ ගිණුමට ශේෂය එකතු විය.');
             e.target.reset();
         }
@@ -346,6 +368,7 @@
 
             saveAndAddHistoryCard(`${bank} (${acc})`, amount, 'Withdrawal');
 
+            // Telegram Notification for Withdrawal
             let withdrawMsg = `🏦 *නව මුදල් ඉල්ලුම් කිරීමක් (New Withdrawal Request)*\n\n💰 මුදල: රු. ${amount.toLocaleString()}\n🏛️ බැංකුව: ${bank}\n🔢 ගිණුම් අංකය: ${acc}`;
             sendTelegramMessage(withdrawMsg);
 
@@ -364,6 +387,9 @@
             let historyList = JSON.parse(localStorage.getItem('lw_mob_history')) || [];
             historyList.unshift(record);
             localStorage.setItem('lw_mob_history', JSON.stringify(historyList));
+
+            // Sync to Firebase Firestore so the main Investment App updates in real-time
+            db.collection("mobcash_transactions").add(record).catch(err => console.error("Firebase Sync Error:", err));
 
             renderHistoryCards();
         }
