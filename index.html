@@ -6,6 +6,36 @@
     <title>DREX // MOBCASH APP TERMINAL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Modular CDN Version) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration using lanka-wealth project parameters[span_0](start_span)[span_0](end_span)
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2GINmNAATE3gtlOuI_DYLG16x6MFI1c0",
+            authDomain: "lanka-wealth.firebaseapp.com",
+            projectId: "lanka-wealth",
+            storageBucket: "lanka-wealth.firebasestorage.app",
+            messagingSenderId: "36347966897",
+            appId: "1:36347966897:web:firebase-app-id" // Web Client App ID mapped to project
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Expose Firebase tools globally for app functions
+        window.db = db;
+        window.firebaseFns = {
+            collection, addDoc, getDocs, query, orderBy, doc, getDoc, setDoc, updateDoc
+        };
+
+        // Trigger initial data load once Firebase is linked & session checks out
+        window.dispatchEvent(new Event('firebase-initialized'));
+    </script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -61,7 +91,7 @@
         
         <div class="text-center mb-8">
             <h2 class="text-2xl font-extrabold text-white tracking-wider uppercase mb-1">Mobcash</h2>
-            <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">Secure Agent Login</p>
+            <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">Secure Agent Login (Firebase Linked)</p>
         </div>
 
         <form onsubmit="handleLogin(event)" class="w-full space-y-5">
@@ -85,7 +115,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-4 mt-2 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 transition-all text-sm uppercase tracking-wider mt-4">
+            <button type="submit" class="w-full py-4 mt-2 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 transition-all text-sm uppercase tracking-wider">
                 Login Access
             </button>
         </form>
@@ -115,7 +145,7 @@
             <div class="text-right flex items-center space-x-2">
                 <div>
                     <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-end">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse"></span> Online
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1 animate-pulse"></span> Firebase Live
                     </span>
                     <span class="text-[9px] text-slate-400 uppercase font-mono block" id="logged-user-tag">Admin</span>
                 </div>
@@ -135,8 +165,8 @@
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Main Wallet Balance</p>
                 <h3 class="text-2xl sm:text-3xl font-extrabold text-white mt-1.5 font-mono">Rs. <span id="main-balance-display">0.00</span></h3>
                 <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
-                    <span>Status: <strong class="text-emerald-400">Active Terminal</strong></span>
-                    <span class="text-indigo-400 font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> Secured</span>
+                    <span>Status: <strong class="text-emerald-400">Cloud Synchronized</strong></span>
+                    <span class="text-indigo-400 font-bold"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Firestore</span>
                 </div>
             </div>
 
@@ -194,13 +224,13 @@
             <!-- Transaction History Cards Hub -->
             <div class="space-y-3 pt-2">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-2 text-indigo-400"></i> Transaction History Cards</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center"><i class="fa-solid fa-clock-rotate-left mr-2 text-indigo-400"></i> Firestore History Cards</h4>
                     <span class="text-[10px] text-slate-400 font-medium" id="app-history-count">Total: 0 Records</span>
                 </div>
 
                 <!-- History Cards Container -->
                 <div id="app-history-list" class="space-y-3">
-                    <!-- History will populate here dynamically -->
+                    <!-- History will populate here dynamically from Firestore -->
                 </div>
             </div>
 
@@ -247,11 +277,10 @@
 
 
     <!-- ============================================== -->
-    <!-- 4. JAVASCRIPT LOGIC (With LocalStorage Persistence) -->
+    <!-- 4. JAVASCRIPT LOGIC (With Firestore Integration) -->
     <!-- ============================================== -->
     <script>
-        // Load stored balance & history or initialize defaults
-        let currentMainBalance = localStorage.getItem('mob_balance') !== null ? parseFloat(localStorage.getItem('mob_balance')) : null;
+        let currentMainBalance = 0.00;
         let loggedUserRole = localStorage.getItem('mob_user') || null;
 
         // Auto-login check if session data exists
@@ -261,34 +290,25 @@
                 document.getElementById('app-screen').classList.remove('hidden');
                 document.getElementById('app-screen').classList.add('flex');
                 document.getElementById('logged-user-tag').innerText = loggedUserRole.toUpperCase();
-                updateBalanceDisplay();
-                loadHistoryFromStorage();
             }
         });
 
-        function handleLogin(e) {
+        window.addEventListener('firebase-initialized', () => {
+            if (loggedUserRole) {
+                syncBalanceAndHistoryFromFirestore();
+            }
+        });
+
+        async function handleLogin(e) {
             e.preventDefault();
             const uname = document.getElementById('login-username').value.trim().toLowerCase();
             const pass = document.getElementById('login-password').value;
 
             if (pass === '1234') {
-                if (uname === 'admin') {
-                    loggedUserRole = 'admin';
-                    // If balance not set previously, set default 100000 for admin
-                    if (localStorage.getItem('mob_balance') === null) {
-                        currentMainBalance = 100000.00;
-                        localStorage.setItem('mob_balance', currentMainBalance);
-                    }
+                if (uname === 'admin' || uname === 'super') {
+                    loggedUserRole = uname;
                     localStorage.setItem('mob_user', loggedUserRole);
-                    initAppSession('Admin');
-                } else if (uname === 'super') {
-                    loggedUserRole = 'super';
-                    if (localStorage.getItem('mob_balance') === null) {
-                        currentMainBalance = 0.00;
-                        localStorage.setItem('mob_balance', currentMainBalance);
-                    }
-                    localStorage.setItem('mob_user', loggedUserRole);
-                    initAppSession('Super');
+                    initAppSession(uname === 'admin' ? 'Admin' : 'Super');
                 } else {
                     document.getElementById('error-modal').classList.remove('hidden');
                 }
@@ -297,20 +317,19 @@
             }
         }
 
-        function initAppSession(roleName) {
+        async function initAppSession(roleName) {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
             document.getElementById('app-screen').classList.add('flex');
             document.getElementById('logged-user-tag').innerText = roleName;
-            updateBalanceDisplay();
-            loadHistoryFromStorage();
+            
+            await syncBalanceAndHistoryFromFirestore();
         }
 
         function closeErrorModal() {
             document.getElementById('error-modal').classList.add('hidden');
         }
 
-        // Logout function (Does NOT clear balance or history records)
         function handleLogout() {
             document.getElementById('app-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('flex');
@@ -318,11 +337,51 @@
             
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
+            localStorage.removeItem('mob_user');
         }
 
-        function updateBalanceDisplay() {
+        async function updateBalanceInFirestore(newBal) {
+            currentMainBalance = newBal;
             document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            localStorage.setItem('mob_balance', currentMainBalance);
+            
+            if (window.db && window.firebaseFns) {
+                try {
+                    const { doc, setDoc } = window.firebaseFns;
+                    const balanceRef = doc(window.db, "mobcash_config", "wallet_state");
+                    await setDoc(balanceRef, { balance: currentMainBalance }, { merge: true });
+                } catch (err) {
+                    console.error("Error updating balance in Firestore: ", err);
+                }
+            }
+        }
+
+        async function syncBalanceAndHistoryFromFirestore() {
+            if (!window.db || !window.firebaseFns) return;
+            const { doc, getDoc, collection, getDocs, query, orderBy } = window.firebaseFns;
+
+            try {
+                // Fetch Balance
+                const balanceSnap = await getDoc(doc(window.db, "mobcash_config", "wallet_state"));
+                if (balanceSnap.exists()) {
+                    currentMainBalance = balanceSnap.data().balance;
+                } else {
+                    currentMainBalance = loggedUserRole === 'admin' ? 100000.00 : 0.00;
+                    await updateBalanceInFirestore(currentMainBalance);
+                }
+                document.getElementById('main-balance-display').innerText = currentMainBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+                // Fetch History
+                const q = query(collection(window.db, "mobcash_transactions"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                let historyList = [];
+                querySnapshot.forEach((docSnap) => {
+                    historyList.push(docSnap.data());
+                });
+
+                renderHistoryCards(historyList);
+            } catch (err) {
+                console.error("Error syncing with Firestore:", err);
+            }
         }
 
         function switchAppTab(tab) {
@@ -348,7 +407,7 @@
             }
         }
 
-        function handleAppDeposit(e) {
+        async function handleAppDeposit(e) {
             e.preventDefault();
             const userId = document.getElementById('app-dep-id').value;
             const amountInput = document.getElementById('app-dep-amount').value;
@@ -357,15 +416,15 @@
             if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
             if (amount > currentMainBalance) return alert('ප්‍රමාණවත් බැලන්ස් එකක් නොමැත! (Insufficient Balance)');
 
-            currentMainBalance -= amount;
-            updateBalanceDisplay();
+            let newBal = currentMainBalance - amount;
+            await updateBalanceInFirestore(newBal);
 
-            saveAndAddHistoryCard(userId, amount, 'Deposit');
-            alert('Deposit සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
+            await saveAndAddHistoryCard(userId, amount, 'Deposit');
+            alert('Deposit සාර්ථකයි! Firestore වෙත සුරකින ලදී.');
             e.target.reset();
         }
 
-        function handleAppWithdraw(e) {
+        async function handleAppWithdraw(e) {
             e.preventDefault();
             const userId = document.getElementById('app-wth-id').value;
             const amountInput = document.getElementById('app-wth-amount').value;
@@ -373,39 +432,43 @@
 
             if (amount <= 0) return alert('කරුණාකර නිවැරදි මුදලක් ඇතුළත් කරන්න!');
 
-            currentMainBalance += amount;
-            updateBalanceDisplay();
+            let newBal = currentMainBalance + amount;
+            await updateBalanceInFirestore(newBal);
 
-            saveAndAddHistoryCard(userId, amount, 'Withdrawal');
-            alert('Withdrawal සාර්ථකයි! නව හිස්ට්‍රි කාඩ් එකක් එක් විය.');
+            await saveAndAddHistoryCard(userId, amount, 'Withdrawal');
+            alert('Withdrawal සාර්ථකයි! Firestore වෙත සුරකින ලදී.');
             e.target.reset();
         }
 
-        function saveAndAddHistoryCard(userId, amount, type) {
+        async function saveAndAddHistoryCard(userId, amount, type) {
             const now = new Date();
             const dateStr = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             const fullDateTime = `${dateStr} - ${timeStr}`;
 
-            const record = { userId, amount, type, fullDateTime };
+            const record = { 
+                userId, 
+                amount, 
+                type, 
+                fullDateTime, 
+                timestamp: Date.now() 
+            };
             
-            // Get existing history from localStorage
-            let historyList = JSON.parse(localStorage.getItem('mob_history')) || [];
-            historyList.unshift(record); // Add to beginning
-            localStorage.setItem('mob_history', JSON.stringify(historyList));
+            if (window.db && window.firebaseFns) {
+                try {
+                    const { collection, addDoc } = window.firebaseFns;
+                    await addDoc(collection(window.db, "mobcash_transactions"), record);
+                } catch (err) {
+                    console.error("Error adding document to Firestore: ", err);
+                }
+            }
 
-            renderHistoryCards();
+            await syncBalanceAndHistoryFromFirestore();
         }
 
-        function loadHistoryFromStorage() {
-            renderHistoryCards();
-        }
-
-        function renderHistoryCards() {
+        function renderHistoryCards(historyList) {
             const historyListContainer = document.getElementById('app-history-list');
             historyListContainer.innerHTML = '';
-            
-            let historyList = JSON.parse(localStorage.getItem('mob_history')) || [];
             
             document.getElementById('app-history-count').innerText = `Total: ${historyList.length} Records`;
 
